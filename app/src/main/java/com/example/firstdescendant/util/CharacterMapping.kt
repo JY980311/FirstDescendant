@@ -1,6 +1,8 @@
 package com.example.firstdescendant.util
 
 object CharacterMapping {
+
+    //TODO : 헤일리 추가하기
     private val characterMap = mapOf(
         "101000001" to "레픽",
         "101000002" to "에이잭스",

@@ -1,7 +1,7 @@
 package com.example.firstdescendant.network
 
-import com.example.firstdescendant.data.user.basicinfo.UserBasicInfo
-import com.example.firstdescendant.data.user.descendantinfo.UserDescendantData
+import com.example.firstdescendant.data.user.basicinfo.UserBasic
+import com.example.firstdescendant.data.user.descendantinfo.UserDescendant
 import com.example.firstdescendant.data.user.ouid.UserOuid
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -24,7 +24,7 @@ interface DescendantApiService {
     @GET("user/basic")
     suspend fun getUserInfo(
         @Query("ouid") ouid: String = ""
-    ) : UserBasicInfo
+    ) : UserBasic
 
     @Headers(
         "accept: application/json",
@@ -33,5 +33,5 @@ interface DescendantApiService {
     @GET("user/descendant")
     suspend fun getUserDescendantInfo(
         @Query("ouid") ouid: String = ""
-    ) : UserDescendantData
+    ) : UserDescendant
 }

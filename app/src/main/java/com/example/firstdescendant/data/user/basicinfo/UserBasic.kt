@@ -1,6 +1,6 @@
 package com.example.firstdescendant.data.user.basicinfo
 
-data class UserBasicInfo(
+data class UserBasic(
     val game_language: String,
     val mastery_rank_exp: Int,
     val mastery_rank_level: Int,

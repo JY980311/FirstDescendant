@@ -3,12 +3,11 @@ package com.example.firstdescendant.screen.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.firstdescendant.data.user.basicinfo.UserBasicInfo
-import com.example.firstdescendant.data.user.descendantinfo.UserDescendantData
+import com.example.firstdescendant.data.user.basicinfo.UserBasic
+import com.example.firstdescendant.data.user.descendantinfo.UserDescendant
 import com.example.firstdescendant.data.user.ouid.UserOuid
 import com.example.firstdescendant.network.RetrofitClient
 import com.example.firstdescendant.util.CharacterMapping
-import com.example.firstdescendant.util.UserModuleMapping
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -19,10 +18,10 @@ class TestScreenViewModel: ViewModel() {
     private val _test = MutableStateFlow(UserOuid(""))
     val test = _test.asStateFlow()
 
-    private val _user_basicInfo = MutableStateFlow(UserBasicInfo("",0,0,"","","","","",""))
+    private val _user_basicInfo = MutableStateFlow(UserBasic("",0,0,"","","","","",""))
     val basicInfo = _user_basicInfo.asStateFlow()
 
-    private val _user_descendantInfo = MutableStateFlow(UserDescendantData("",0,"", emptyList(),0,0,"",""))
+    private val _user_descendantInfo = MutableStateFlow(UserDescendant("",0,"", emptyList(),0,0,"",""))
     val descendantInfo = _user_descendantInfo.asStateFlow()
 
     private val _textField = MutableStateFlow("")
