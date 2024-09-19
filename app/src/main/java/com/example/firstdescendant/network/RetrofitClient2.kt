@@ -7,14 +7,14 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
-class RetrofitClient {
+class RetrofitClient2 {
     companion object { // 객체 생성 없이 사용할 수 있도록 함
 
-        private const val descendantApi = "https://open.api.nexon.com/tfd/v1/"
+        private const val descendantApi = "https://open.api.nexon.com/static/tfd/"
 
         private var descendantApiService: DescendantApiService? = null
 
-        fun getDecendantApi(): DescendantApiService {
+        fun TestgetDecendantApi(): DescendantApiService {
             if (descendantApiService == null) {
 
                 val okHttpClient = OkHttpClient.Builder()

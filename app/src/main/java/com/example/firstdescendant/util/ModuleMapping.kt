@@ -3,7 +3,7 @@ package com.example.firstdescendant.util
 import com.example.firstdescendant.data.user.descendantinfo.ModuleInfo
 
 
-object UserModuleMapping {
+object ModuleMapping {
     val moduleMap = mapOf(
         "251001001" to ModuleInfo("철통 방어", "https://open.api.nexon.com/static/tfd/img/be622dc1cf8c4ecc72aa0745d03ecfbe", "일반"),
         "251001002" to ModuleInfo("부지런한 손놀림", "https://open.api.nexon.com/static/tfd/img/60ceffaa9b04d4f4b5d01977bd259124", "일반"),

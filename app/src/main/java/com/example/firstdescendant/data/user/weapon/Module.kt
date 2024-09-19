@@ -1,4 +1,4 @@
-package com.example.firstdescendant.data.user.weaponInfo
+package com.example.firstdescendant.data.user.weapon
 
 data class Module(
     val module_enchant_level: Int,
