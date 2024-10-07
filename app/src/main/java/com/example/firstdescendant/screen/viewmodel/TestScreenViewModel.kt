@@ -3,14 +3,12 @@ package com.example.firstdescendant.screen.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.firstdescendant.data.meta.reactor.ReactorData
-import com.example.firstdescendant.data.meta.reactor.ReactorDataItem
 import com.example.firstdescendant.data.user.basicinfo.UserBasic
 import com.example.firstdescendant.data.user.descendantinfo.UserDescendant
 import com.example.firstdescendant.data.user.ouid.UserOuid
+import com.example.firstdescendant.data.user.reactor.UserReactor
 import com.example.firstdescendant.data.user.weapon.UserWeapon
 import com.example.firstdescendant.network.RetrofitClient
-import com.example.firstdescendant.network.RetrofitClient2
 import com.example.firstdescendant.util.CharacterMapping
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,9 +29,12 @@ class TestScreenViewModel: ViewModel() {
 
     private val _user_weaponInfo = MutableStateFlow(UserWeapon("","", emptyList()))
     val userWeaponInfo = _user_weaponInfo.asStateFlow()
-    //TODO: TEST
-    private val _all_reactor = MutableStateFlow<List<ReactorDataItem>>(emptyList())
-    val all_reactor = _all_reactor.asStateFlow()
+
+    private val _user_reactor = MutableStateFlow(UserReactor("", emptyList(),0,"",0,"",""))
+    val userReactorInfo = _user_reactor.asStateFlow()
+
+    private val _isReactorNameReady = MutableStateFlow(false)
+    val isReactorNameReady = _isReactorNameReady.asStateFlow()
 
     private val _textField = MutableStateFlow("")
     val textField = _textField.asStateFlow()
@@ -128,17 +129,50 @@ class TestScreenViewModel: ViewModel() {
         }
     }
 
-    //TODO: TEST
-    fun getReactorData() {
+    /** 유저 전체 반응로 정보 조회 */
+    fun getUserReactorInfo() {
         viewModelScope.launch {
-            val apiService = RetrofitClient2.TestgetDecendantApi()
+            val apiService = RetrofitClient.getDecendantApi()
             try {
-                val apiResponse = apiService.getReactor()
-                _all_reactor.value = apiResponse
+                if (test.value.ouid.isNotEmpty() && test.value.ouid != "test") {
+                    val apiResponse = apiService.getUserReactorInfo("ko", test.value.ouid)
+                    _user_reactor.value = apiResponse
+
+                    _isReactorNameReady.value = false
+
+                    getUserReactorName(_user_reactor.value.reactor_id)
+
+                    Log.d("ViewModel - getUserReactorInfo", "user_reactor: ${userReactorInfo.value}")
+                } else {
+                    Log.d("ViewModel - getUserReactorInfo", "getUserReactorInfo called with invalid ouid: ${test.value.ouid}")
+                }
             } catch (e: HttpException) {
-                Log.e("ViewModel - getReactorData[ERROR]", "error: ${e.message}", e)
+                Log.e("ViewModel - getUserReactorInfo[ERROR]", "error: ${e.message}", e)
                 val errorBody = e.response()?.errorBody()?.string()
                 Log.e("API_ERROR", "Error body: $errorBody")
+            }
+        }
+    }
+
+    /** 반응로 ID에 맞춰서 이름으로 출력 */
+    fun getUserReactorName(reactorId : String) {
+        viewModelScope.launch {
+            val apiService = RetrofitClient.getSupabaseApiService()
+            try {
+                val apiResponse = apiService.getUserReactorName(
+                    select = "reactor_name",
+                    main_reactor_id = "eq.$reactorId"
+                )
+
+                _user_reactor.value = _user_reactor.value.copy(
+                    reactor_id = apiResponse[0].reactor_name
+                )
+
+                _isReactorNameReady.value = true
+
+                Log.d("ViewModel - getUserReactorName", "user_reactor: ${userReactorInfo.value}")
+            } catch (e: Exception) {
+                Log.e("ViewModel - getUserReactorName[ERROR]", "error: ${e.message}", e)
             }
         }
     }

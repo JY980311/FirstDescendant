@@ -1,4 +1,4 @@
-package com.example.firstdescendant.screen
+package com.example.firstdescendant.screen.user_info
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import com.example.firstdescendant.data.user.basicinfo.UserBasic
 
 @Composable
-fun BasicInfoScreen(
+fun UserBasicInfoScreen(
     userBasic: UserBasic,
 ) {
     Column(

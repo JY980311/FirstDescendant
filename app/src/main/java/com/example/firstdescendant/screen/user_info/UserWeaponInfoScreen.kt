@@ -1,4 +1,4 @@
-package com.example.firstdescendant.screen
+package com.example.firstdescendant.screen.user_info
 
 import android.util.Log
 import androidx.compose.foundation.background

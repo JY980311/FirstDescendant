@@ -5,6 +5,7 @@ import com.example.firstdescendant.data.meta.reactor.ReactorDataItem
 import com.example.firstdescendant.data.user.basicinfo.UserBasic
 import com.example.firstdescendant.data.user.descendantinfo.UserDescendant
 import com.example.firstdescendant.data.user.ouid.UserOuid
+import com.example.firstdescendant.data.user.reactor.UserReactor
 import com.example.firstdescendant.data.user.weapon.UserWeapon
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -56,10 +57,18 @@ interface DescendantApiService {
         @Query("ouid") ouid: String = ""
     ) : UserWeapon
 
+    /**
+     * Ouid를 통해 장착 중인 반응로 정보 조회
+     * language_code: 언어 코드 (기본값: ko)
+     * */
     @Headers(
         "accept: application/json",
         "x-nxopen-api-key: test_5219217a65eb1d692f5dd6fdfc38d36cb03f0514af2c00d90bd3e547de61c7f0efe8d04e6d233bd35cf2fabdeb93fb0d"
     )
-    @GET("meta/ko/reactor.json")
-    suspend fun getReactor() : List<ReactorDataItem>
+    @GET("user/reactor")
+    suspend fun getUserReactorInfo(
+        @Query("language_code") language_code: String ="ko",
+        @Query("ouid") ouid: String = ""
+    ) : UserReactor
+
 }

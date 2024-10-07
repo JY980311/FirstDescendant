@@ -1,4 +1,4 @@
-package com.example.firstdescendant.screen
+package com.example.firstdescendant.screen.user_info
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -33,7 +33,7 @@ import com.example.firstdescendant.ui.theme.transcendentColor
 import com.example.firstdescendant.util.ModuleMapping
 
 @Composable
-fun DescendantInfoScreen(
+fun UserDescendantInfoScreen(
     userDescendantInfo: UserDescendant,
     userDescendantName: String
 ) {

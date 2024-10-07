@@ -1,4 +1,4 @@
-package com.example.firstdescendant.screen
+package com.example.firstdescendant.screen.user_info
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
 
 @Composable
-fun MainScreen(
+fun UserMainScreen(
     viewModel: TestScreenViewModel
 ) {
 
@@ -32,6 +32,10 @@ fun MainScreen(
     val descendantInfo = viewModel.descendantInfo.collectAsStateWithLifecycle()
 
     val userWeaponInfo = viewModel.userWeaponInfo.collectAsStateWithLifecycle()
+    
+    val userReactorInfo = viewModel.userReactorInfo.collectAsStateWithLifecycle()
+
+    val ReactorNameReady = viewModel.isReactorNameReady.collectAsStateWithLifecycle()
 
     val textField = viewModel.textField.collectAsStateWithLifecycle()
 
@@ -77,7 +81,9 @@ fun MainScreen(
             Text(text = "장착 무기 정보 조회")
         }
 
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+            viewModel.getUserReactorInfo()
+        }) {
             Text(text = "장착 반응로 정보 조회")
         }
 
@@ -86,12 +92,19 @@ fun MainScreen(
         }
 
         if (basicInfo.value.user_name != "") {
-            BasicInfoScreen(userBasic = basicInfo.value)
-            DescendantInfoScreen(
+            UserBasicInfoScreen(userBasic = basicInfo.value)
+        }
+        if(descendantInfo.value.descendant_id != "") {
+            UserDescendantInfoScreen(
                 userDescendantInfo = descendantInfo.value,
                 userDescendantName = viewModel.getCharacterNameById(descendantInfo.value.descendant_id)
             )
+        }
+        if(userWeaponInfo.value.ouid != "") {
             UserWeaponInfoScreen(userWeaponInfo = userWeaponInfo.value)
+        }
+        if(ReactorNameReady.value) {
+            UserReactorInfoScreen(userReactorInfo = userReactorInfo.value)
         }
     }
 }
@@ -118,5 +131,5 @@ fun LevelBox(
 @Preview(showBackground = true)
 @Composable
 fun TestScreenPreview() {
-    MainScreen(TestScreenViewModel())
+    UserMainScreen(TestScreenViewModel())
 }
