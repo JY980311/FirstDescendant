@@ -124,7 +124,7 @@ fun ModuleBox(
                                 colorStops =
                                 when (ModuleMapping.getModuleTierById(listOf(module.module_id))) {
                                     listOf("초월") -> transcendentModule
-                                    listOf("전설") -> specialModule
+                                    listOf("궁극") -> specialModule
                                     listOf("희귀") -> rareModule
                                     else -> standardModule
                                 },
