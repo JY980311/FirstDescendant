@@ -42,17 +42,38 @@ fun UserWeaponInfoScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Text(text = "무기 ID(무기 이름) : ${WeaponMapping.getWeaponNameById(weaponID).joinToString("")}")
-        Text(text = "무기 레벨 : ${userWeaponInfo.weapon.map { it.weapon_level }.joinToString("")}")
-        Text(text = "고유 능력 강화 레벨 : ${userWeaponInfo.weapon.map { it.perk_ability_enchant_level }.joinToString("")}")
-        Text(text = "무기 옵션 : ${userWeaponInfo.weapon.map { "\n" + it.weapon_additional_stat.map { "${it.additional_stat_name} = ${it.additional_stat_value}\n" }.joinToString("")  }.joinToString("")}")
-        Text(text = "무기 모듈 : ")
+        for(i in 0 until userWeaponInfo.weapon.size) {
+            Text(text = "무기 ID(무기 이름) : ${WeaponMapping.getWeaponNameById(weaponID)?.getOrNull(i) ?: "이름 없음"}")
+            Text(text = "무기 레벨 : ${userWeaponInfo.weapon[i].weapon_level}")
+            Text(text = "고유 능력 강화 레벨 : ${userWeaponInfo.weapon[i].perk_ability_enchant_level ?: "레벨 없음"}")
+            Text(text = "무기 강화 레벨 : ")
+            if (userWeaponInfo.weapon[i].weapon_additional_stat.isNullOrEmpty()) {
+                Text(text = "추가 스탯 없음")
+            } else {
+                /*for (a in 0..3) {
+                    Text(
+                        text = userWeaponInfo.weapon[i].run {
+                            "${weapon_additional_stat?.getOrNull(a)?.additional_stat_name ?: "스탯 없음"} = ${weapon_additional_stat?.getOrNull(a)?.additional_stat_value ?: "값 없음"}"
+                        }
+                    )
+                }*/
+                userWeaponInfo.weapon[i].weapon_additional_stat?.take(4)?.forEach { stat ->
+                    Text(
+                        text = "${stat.additional_stat_name} = ${stat.additional_stat_value}"
+                    )
+                }
+            }
+            Text(text = "무기 모듈 : ")
 
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            items(userWeaponInfo.weapon) { weapon ->
-                WeaponModuleLayout(userWeapon = weapon)
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                /*items(userWeaponInfo.weapon) { weapon ->
+                    WeaponModuleLayout(userWeapon = weapon)
+                }*/
+                item {
+                    WeaponModuleLayout(userWeapon = userWeaponInfo.weapon[i])
+                }
             }
         }
     }
@@ -63,6 +84,7 @@ fun UserWeaponInfoScreen(
 fun WeaponModuleBox(
     weaponModule: List<Module>
 ) {
+    //전설
     val specialModule = arrayOf(
         0.1f to specialModColor,
         0.4f to moduleCenterColor,
@@ -71,6 +93,7 @@ fun WeaponModuleBox(
         0.9f to specialModColor
     )
 
+    //희귀
     val rareModule = arrayOf(
         0.1f to rareColor,
         0.4f to moduleCenterColor,
@@ -79,6 +102,7 @@ fun WeaponModuleBox(
         0.9f to rareColor
     )
 
+    //일반
     val standardModule = arrayOf(
         0.1f to standardColor,
         0.4f to moduleCenterColor,
@@ -114,7 +138,7 @@ fun WeaponModuleBox(
                             Brush.linearGradient(
                                 colorStops =
                                 when (ModuleMapping.getModuleTierById(listOf(module.module_id))) {
-                                    listOf("전설") -> specialModule
+                                    listOf("궁극") -> specialModule
                                     listOf("희귀") -> rareModule
                                     else -> standardModule
                                 },
