@@ -35,6 +35,8 @@ fun UserMainScreen(
     
     val userReactorInfo = viewModel.userReactorInfo.collectAsStateWithLifecycle()
 
+    val userReactorImage = viewModel.userReactorImage.collectAsStateWithLifecycle()
+
     val ReactorNameReady = viewModel.isReactorNameReady.collectAsStateWithLifecycle()
 
     val textField = viewModel.textField.collectAsStateWithLifecycle()
@@ -104,7 +106,10 @@ fun UserMainScreen(
             UserWeaponInfoScreen(userWeaponInfo = userWeaponInfo.value)
         }
         if(ReactorNameReady.value) {
-            UserReactorInfoScreen(userReactorInfo = userReactorInfo.value)
+            UserReactorInfoScreen(
+                userReactorInfo = userReactorInfo.value,
+                userReactorImage = userReactorImage.value
+            )
         }
     }
 }

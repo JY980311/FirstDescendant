@@ -7,6 +7,7 @@ import com.example.firstdescendant.data.user.basicinfo.UserBasic
 import com.example.firstdescendant.data.user.descendantinfo.UserDescendant
 import com.example.firstdescendant.data.user.ouid.UserOuid
 import com.example.firstdescendant.data.user.reactor.UserReactor
+import com.example.firstdescendant.data.user.reactor.UserReactorImage
 import com.example.firstdescendant.data.user.weapon.UserWeapon
 import com.example.firstdescendant.network.RetrofitClient
 import com.example.firstdescendant.util.CharacterMapping
@@ -32,6 +33,9 @@ class TestScreenViewModel: ViewModel() {
 
     private val _user_reactor = MutableStateFlow(UserReactor("", emptyList(),0,"",0,"",""))
     val userReactorInfo = _user_reactor.asStateFlow()
+
+    private val _user_reactor_image = MutableStateFlow(UserReactorImage(""))
+    val userReactorImage = _user_reactor_image.asStateFlow()
 
     private val _isReactorNameReady = MutableStateFlow(false)
     val isReactorNameReady = _isReactorNameReady.asStateFlow()
@@ -140,9 +144,11 @@ class TestScreenViewModel: ViewModel() {
 
                     _isReactorNameReady.value = false
 
+                    getUserReactorImage(_user_reactor.value.reactor_id)
                     getUserReactorName(_user_reactor.value.reactor_id)
 
                     Log.d("ViewModel - getUserReactorInfo", "user_reactor: ${userReactorInfo.value}")
+                    Log.d("ViewModel - getUserReactorInfo", "user_reactor_image: ${userReactorImage.value}")
                 } else {
                     Log.d("ViewModel - getUserReactorInfo", "getUserReactorInfo called with invalid ouid: ${test.value.ouid}")
                 }
@@ -176,6 +182,26 @@ class TestScreenViewModel: ViewModel() {
             }
         }
     }
+
+    fun getUserReactorImage(reactorId: String) {
+        viewModelScope.launch {
+            val apiService = RetrofitClient.getSupabaseApiService()
+            try {
+                val apiResponse = apiService.getUserReactorImage(
+                    select = "image_url",
+                    main_reactor_id = "eq.$reactorId"
+                )
+
+                _user_reactor_image.value = _user_reactor_image.value.copy(
+                    image_url = apiResponse[0].image_url
+                )
+
+            } catch (e: Exception) {
+
+            }
+        }
+    }
+
 
     /** ID를 통해 맵핑된 계승자의 이름으로 출력 */
     fun getCharacterNameById(id: String):String {
