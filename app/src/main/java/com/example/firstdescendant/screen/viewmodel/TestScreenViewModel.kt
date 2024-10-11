@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.firstdescendant.data.user.basicinfo.UserBasic
 import com.example.firstdescendant.data.user.descendantinfo.UserDescendant
+import com.example.firstdescendant.data.user.module.UserModuleInfo
 import com.example.firstdescendant.data.user.ouid.UserOuid
 import com.example.firstdescendant.data.user.reactor.UserReactor
 import com.example.firstdescendant.data.user.reactor.UserReactorImage
 import com.example.firstdescendant.data.user.weapon.UserWeapon
 import com.example.firstdescendant.network.RetrofitClient
-import com.example.firstdescendant.util.CharacterMapping
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -19,30 +19,47 @@ import retrofit2.HttpException
 
 class TestScreenViewModel: ViewModel() {
 
+    /** OUID */
     private val _test = MutableStateFlow(UserOuid(""))
     val test = _test.asStateFlow()
 
+    /** 사용자 기본 정보 */
     private val _user_basicInfo = MutableStateFlow(UserBasic("",0,0,"","","","","",""))
     val basicInfo = _user_basicInfo.asStateFlow()
 
+    /** 사용자 계승자 정보 */
     private val _user_descendantInfo = MutableStateFlow(UserDescendant("",0,"", emptyList(),0,0,"",""))
     val descendantInfo = _user_descendantInfo.asStateFlow()
 
+    /** 사용자 모듈 정보 */
+    private val _user_module = MutableStateFlow<List<UserModuleInfo>>(emptyList())
+    val userModule = _user_module.asStateFlow()
+
+    /** 사용자 무기 정보 */
     private val _user_weaponInfo = MutableStateFlow(UserWeapon("","", emptyList()))
     val userWeaponInfo = _user_weaponInfo.asStateFlow()
 
+    /** 사용자 반응로 정보 */
     private val _user_reactor = MutableStateFlow(UserReactor("", emptyList(),0,"",0,"",""))
     val userReactorInfo = _user_reactor.asStateFlow()
 
+    /** 사용자 반응로 이미지 정보 */
     private val _user_reactor_image = MutableStateFlow(UserReactorImage(""))
     val userReactorImage = _user_reactor_image.asStateFlow()
 
+    /** 반응로 이름 변환 완료 되었는지 체크 */
     private val _isReactorNameReady = MutableStateFlow(false)
     val isReactorNameReady = _isReactorNameReady.asStateFlow()
 
+    /** 계승자 이름 변환 완료 되었는지 체크 */
+    private val _isDescendantNameReady = MutableStateFlow(false)
+    val isDescendantNameReady = _isDescendantNameReady.asStateFlow()
+
+    /** 사용자 입력 텍스트 */
     private val _textField = MutableStateFlow("")
     val textField = _textField.asStateFlow()
 
+    /** 에러 메시지 */
     private val _errorMessage = MutableStateFlow("")
     val errorMessage = _errorMessage.asStateFlow()
 
@@ -96,23 +113,7 @@ class TestScreenViewModel: ViewModel() {
         }
     }
 
-    fun getDescendantInfo() {
-        viewModelScope.launch {
-            val apiService = RetrofitClient.getDecendantApi()
-            try {
-                // test.value.ouid가 올바르게 설정되었는지 확인합니다.
-                if (test.value.ouid.isNotEmpty() && test.value.ouid != "test") {
-                    val apiResponse = apiService.getUserDescendantInfo(test.value.ouid)
-                    _user_descendantInfo.value = apiResponse
-                    Log.d("ViewModel - getDescendantInfo", "descendantInfo: ${descendantInfo.value}")
-                } else {
-                    Log.e("ViewModel - getDescendantInfo", "getDescendantInfo called with invalid ouid: ${test.value.ouid}")
-                }
-            } catch (e: Exception) {
-                Log.e("ViewModel - getDescendantInfo[ERROR]", "error: ${e.message}", e)
-            }
-        }
-    }
+
 
     fun getUserWeaponInfo() {
         viewModelScope.launch {
@@ -133,7 +134,7 @@ class TestScreenViewModel: ViewModel() {
         }
     }
 
-    /** 유저 전체 반응로 정보 조회 */
+    /** 유저 반응로 정보 조회 */
     fun getUserReactorInfo() {
         viewModelScope.launch {
             val apiService = RetrofitClient.getDecendantApi()
@@ -160,8 +161,74 @@ class TestScreenViewModel: ViewModel() {
         }
     }
 
+    /** 계승자 정보 조회 */
+    fun getDescendantInfo() {
+        viewModelScope.launch {
+            val apiService = RetrofitClient.getDecendantApi()
+            try {
+                if (test.value.ouid.isNotEmpty() && test.value.ouid != "test") {
+                    val apiResponse = apiService.getUserDescendantInfo(test.value.ouid)
+                    _user_descendantInfo.value = apiResponse
+
+                    _isDescendantNameReady.value = false
+
+                    getDescendantName(_user_descendantInfo.value.descendant_id)
+                    getModuleInfo()
+
+                    Log.d("ViewModel - getDescendantInfo", "descendantInfo: ${descendantInfo.value}")
+                } else {
+                    Log.e("ViewModel - getDescendantInfo", "getDescendantInfo called with invalid ouid: ${test.value.ouid}")
+                }
+            } catch (e: Exception) {
+                Log.e("ViewModel - getDescendantInfo[ERROR]", "error: ${e.message}", e)
+            }
+        }
+    }
+
+    /** 모듈 ID, 모듈 한글 이름, 등급, 이미지 가져오기 */
+    private fun getModuleInfo() {
+        viewModelScope.launch {
+            val apiService = RetrofitClient.getSupabaseApiService()
+            try {
+                val moduleIds = _user_descendantInfo.value.module.map { it.module_id }
+                val apiResponse = apiService.getUserModuleName(
+                    select = "main_module_id,module_name,module_tier,image_url",
+                    main_module_id = "in.(${moduleIds.joinToString(",")})" //in 연산자 사용 시, in (1,2,3) 형태로 넣어줘야 함
+                )
+                _user_module.value = apiResponse
+
+                _isDescendantNameReady.value= true
+
+            } catch (e: Exception) {
+                Log.e("ViewModel - getModuleNames[ERROR]", "error: ${e.message}", e)
+            }
+        }
+    }
+
+    /** 계승자 ID에 맞춰서 계승자 이름 출력 */
+    private fun getDescendantName(descendantId : String) {
+        viewModelScope.launch {
+           val apiService = RetrofitClient.getSupabaseApiService()
+            try {
+                val apiResponse = apiService.getUserDescendantName(
+                    select = "descendant_name",
+                    main_descendant_id = "eq.$descendantId"
+                )
+
+                _user_descendantInfo.value = _user_descendantInfo.value.copy(
+                    descendant_id = apiResponse[0].descendant_name
+                )
+
+               // _isDescendantNameReady.value= true
+
+            } catch (e: Exception) {
+                Log.e("ViewModel - getDescendantName[ERROR]", "error: ${e.message}", e)
+            }
+        }
+    }
+
     /** 반응로 ID에 맞춰서 이름으로 출력 */
-    fun getUserReactorName(reactorId : String) {
+    private fun getUserReactorName(reactorId : String) {
         viewModelScope.launch {
             val apiService = RetrofitClient.getSupabaseApiService()
             try {
@@ -183,7 +250,8 @@ class TestScreenViewModel: ViewModel() {
         }
     }
 
-    fun getUserReactorImage(reactorId: String) {
+    /** 반응로 ID에 맞춰서 이미지 불러오기 */
+    private fun getUserReactorImage(reactorId: String) {
         viewModelScope.launch {
             val apiService = RetrofitClient.getSupabaseApiService()
             try {
@@ -197,23 +265,8 @@ class TestScreenViewModel: ViewModel() {
                 )
 
             } catch (e: Exception) {
-
+                Log.e("ViewModel - getUserReactorImage[ERROR]", "error: ${e.message}", e)
             }
         }
     }
-
-
-    /** ID를 통해 맵핑된 계승자의 이름으로 출력 */
-    fun getCharacterNameById(id: String):String {
-        return CharacterMapping.getCharacterNameById(id)
-    }
-
-    //TODO: 모듈 ID를 이름으로 변환하는 함수 아직 보류
-    /*fun mapModuleIdsToNames(user: UserDescendantData): UserDescendantData {
-        val updatedModules = user.module.map { module ->
-            val moduleName = ModuleMapping.getModuleNameById(listOf(module.module_id)).firstOrNull() ?: "Unknown Module"
-            module.copy(module_id = moduleName) // module_id를 모듈 이름으로 변환
-        }
-        return user.copy(module = updatedModules)
-    }*/
 }

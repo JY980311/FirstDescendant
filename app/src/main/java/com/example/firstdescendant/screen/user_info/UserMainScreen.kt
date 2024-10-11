@@ -13,9 +13,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
@@ -32,16 +32,21 @@ fun UserMainScreen(
     val descendantInfo = viewModel.descendantInfo.collectAsStateWithLifecycle()
 
     val userWeaponInfo = viewModel.userWeaponInfo.collectAsStateWithLifecycle()
-    
+
     val userReactorInfo = viewModel.userReactorInfo.collectAsStateWithLifecycle()
 
     val userReactorImage = viewModel.userReactorImage.collectAsStateWithLifecycle()
 
-    val ReactorNameReady = viewModel.isReactorNameReady.collectAsStateWithLifecycle()
+    val reactorNameReady = viewModel.isReactorNameReady.collectAsStateWithLifecycle()
+
+    val descendantNameReady = viewModel.isDescendantNameReady.collectAsStateWithLifecycle()
 
     val textField = viewModel.textField.collectAsStateWithLifecycle()
 
     val errorMessage = viewModel.errorMessage.collectAsStateWithLifecycle()
+
+    val userModuleInfo by viewModel.userModule.collectAsStateWithLifecycle()
+
 
     Column(
         modifier = Modifier
@@ -96,45 +101,40 @@ fun UserMainScreen(
         if (basicInfo.value.user_name != "") {
             UserBasicInfoScreen(userBasic = basicInfo.value)
         }
-        if(descendantInfo.value.descendant_id != "") {
+        if (descendantNameReady.value) {
             UserDescendantInfoScreen(
                 userDescendantInfo = descendantInfo.value,
-                userDescendantName = viewModel.getCharacterNameById(descendantInfo.value.descendant_id)
+                userModules = descendantInfo.value.module,
+                userModulesInfo = userModuleInfo
             )
-        }
-        if(userWeaponInfo.value.ouid != "") {
-            UserWeaponInfoScreen(userWeaponInfo = userWeaponInfo.value)
-        }
-        if(ReactorNameReady.value) {
-            UserReactorInfoScreen(
-                userReactorInfo = userReactorInfo.value,
-                userReactorImage = userReactorImage.value
-            )
+            if (userWeaponInfo.value.ouid != "") {
+                UserWeaponInfoScreen(userWeaponInfo = userWeaponInfo.value)
+            }
+            if (reactorNameReady.value) {
+                UserReactorInfoScreen(
+                    userReactorInfo = userReactorInfo.value,
+                    userReactorImage = userReactorImage.value
+                )
+            }
         }
     }
-}
 
 
-//TODO: 일단 보류
-@Composable
-fun LevelBox(
-    level: Int
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(1.dp)
+    //TODO: 일단 보류
+    @Composable
+    fun LevelBox(
+        level: Int
     ) {
-        for (i in 1..level) {
-            Box(
-                modifier = Modifier
-                    .size(5.dp, 2.dp)
-                    .background(Color.Red)
-            )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(1.dp)
+        ) {
+            for (i in 1..level) {
+                Box(
+                    modifier = Modifier
+                        .size(5.dp, 2.dp)
+                        .background(Color.Red)
+                )
+            }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TestScreenPreview() {
-    UserMainScreen(TestScreenViewModel())
 }
