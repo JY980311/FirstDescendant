@@ -4,11 +4,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.firstdescendant.data.user.basicinfo.UserBasic
+import com.example.firstdescendant.data.user.basicinfo.UserBasicData
 
 @Composable
 fun UserBasicInfoScreen(
-    userBasic: UserBasic,
+    userBasic: UserBasicData,
 ) {
     Column(
         modifier = Modifier

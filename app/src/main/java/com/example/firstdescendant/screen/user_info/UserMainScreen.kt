@@ -33,6 +33,12 @@ fun UserMainScreen(
 
     val userWeaponInfo = viewModel.userWeaponInfo.collectAsStateWithLifecycle()
 
+    val userExternalInfo = viewModel.userExternalInfo.collectAsStateWithLifecycle()
+
+    val userExternal = viewModel.userExternal.collectAsStateWithLifecycle()
+
+    val userWeapon = viewModel.userWeapon.collectAsStateWithLifecycle()
+
     val userReactorInfo = viewModel.userReactorInfo.collectAsStateWithLifecycle()
 
     val userReactorImage = viewModel.userReactorImage.collectAsStateWithLifecycle()
@@ -40,6 +46,10 @@ fun UserMainScreen(
     val reactorNameReady = viewModel.isReactorNameReady.collectAsStateWithLifecycle()
 
     val descendantNameReady = viewModel.isDescendantNameReady.collectAsStateWithLifecycle()
+
+    val weaponNameReady = viewModel.isWeaponNameReady.collectAsStateWithLifecycle()
+
+    val externalNameReady = viewModel.isExternalNameReady.collectAsStateWithLifecycle()
 
     val textField = viewModel.textField.collectAsStateWithLifecycle()
 
@@ -94,7 +104,9 @@ fun UserMainScreen(
             Text(text = "장착 반응로 정보 조회")
         }
 
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+            viewModel.getUserExternalInfo()
+        }) {
             Text(text = "장착 외장부품 정보 조회")
         }
 
@@ -107,13 +119,23 @@ fun UserMainScreen(
                 userModules = descendantInfo.value.module,
                 userModulesInfo = userModuleInfo
             )
-            if (userWeaponInfo.value.ouid != "") {
-                UserWeaponInfoScreen(userWeaponInfo = userWeaponInfo.value)
+            if (weaponNameReady.value) {
+                UserWeaponInfoScreen(
+                    userWeapon = userWeaponInfo.value,
+                    userWeaponInfo = userWeapon.value,
+                    userModulesInfo = userModuleInfo
+                )
             }
             if (reactorNameReady.value) {
                 UserReactorInfoScreen(
                     userReactorInfo = userReactorInfo.value,
                     userReactorImage = userReactorImage.value
+                )
+            }
+            if (externalNameReady.value) {
+                UserExternalInfoScreen(
+                    userExternal = userExternal.value,
+                    userExternalInfo = userExternalInfo.value
                 )
             }
         }

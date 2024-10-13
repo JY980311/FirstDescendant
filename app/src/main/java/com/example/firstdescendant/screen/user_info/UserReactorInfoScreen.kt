@@ -3,14 +3,12 @@ package com.example.firstdescendant.screen.user_info
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import coil.compose.AsyncImage
-import com.example.firstdescendant.data.user.reactor.UserReactor
+import com.example.firstdescendant.data.user.reactor.UserReactorData
 import com.example.firstdescendant.data.user.reactor.UserReactorImage
-import com.example.firstdescendant.data.user.reactor.UserReactorName
-import kotlinx.coroutines.delay
 
 @Composable
 fun UserReactorInfoScreen(
-    userReactorInfo: UserReactor,
+    userReactorInfo: UserReactorData,
     userReactorImage: UserReactorImage
 ) {
     AsyncImage(

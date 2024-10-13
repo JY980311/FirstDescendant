@@ -16,12 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.firstdescendant.data.user.descendantinfo.UserDescendant
+import com.example.firstdescendant.data.user.descendantinfo.UserDescendantData
 import com.example.firstdescendant.data.user.descendantinfo.UserModule
 import com.example.firstdescendant.data.user.module.UserModuleInfo
 import com.example.firstdescendant.ui.theme.moduleBorderColor
@@ -33,7 +32,7 @@ import com.example.firstdescendant.ui.theme.transcendentColor
 
 @Composable
 fun UserDescendantInfoScreen(
-    userDescendantInfo: UserDescendant,
+    userDescendantInfo: UserDescendantData,
     userModules: List<UserModule>,
     userModulesInfo: List<UserModuleInfo>
 ) {
@@ -100,18 +99,13 @@ fun ModuleBox(
     if (userModules.isEmpty()) {
         Box(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(bottom = 8.dp, top = 8.dp, end = 8.dp)
                 .size(100.dp)
-                .background(
-                    color = Color.Black,
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .border(1.dp, moduleBorderColor, RoundedCornerShape(8.dp)),
-            contentAlignment = Alignment.Center
+                .border(1.dp, moduleBorderColor, RoundedCornerShape(8.dp))
         ) {
             Text(
-                text = "빈칸",
-                color = Color.White,
+                modifier = Modifier.align(Alignment.Center),
+                text = "Empty(빈칸)",
                 fontSize = 12.sp
             )
         }
@@ -146,8 +140,7 @@ fun ModuleBox(
                 }
                 Row {
                     Text(
-                        text = (matchingModule?.module_name
-                            ?: "Unknown") + " (${module.module_enchant_level})",
+                        text = (matchingModule?.module_name?: "Unknown") + "(${module.module_enchant_level})",
                         fontSize = 12.sp,
                     )
                 }
