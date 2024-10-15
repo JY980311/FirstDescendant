@@ -1,21 +1,16 @@
 package com.example.firstdescendant.component
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +27,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.firstdescendant.ui.theme.focusedBorderColor
+import com.example.firstdescendant.ui.theme.textFieldInnerColor
+import com.example.firstdescendant.ui.theme.textFieldPlaceholderColor
+import com.example.firstdescendant.ui.theme.unFocusedBorderColor
 
 @Composable
 fun CustomTextField(
@@ -46,8 +45,8 @@ fun CustomTextField(
             .clip(RoundedCornerShape(4.dp))
             .fillMaxWidth()
             .height(40.dp)
-            .border(1.dp, if(focused) Color.Black else Color.Red, RoundedCornerShape(4.dp))
-            .background(if(focused) Color.Gray else Color.Yellow)
+            .border(1.dp, if(focused) focusedBorderColor else unFocusedBorderColor, RoundedCornerShape(4.dp))
+            .background(textFieldInnerColor)
             .padding(6.dp),
         contentAlignment = Alignment.CenterStart
     ) {
@@ -55,8 +54,10 @@ fun CustomTextField(
         if (value.isEmpty()) {
             Text(
                 text = "abcd#1234",
-                color = Color.Black,
-                fontSize = 12.sp
+                color = textFieldPlaceholderColor,
+                fontSize = 12.sp,
+                lineHeight = 12.sp * 1.5,
+                letterSpacing = 12.sp * (-0.006)
             )
         }
         BasicTextField(
@@ -64,8 +65,10 @@ fun CustomTextField(
             onValueChange = onValueChange,
             interactionSource = interactionSource,
             textStyle = TextStyle(
-                color = Color.Black,
+                color = Color.White,
                 fontSize = 18.sp,
+                lineHeight = 18.sp * 1.5,
+                letterSpacing = 18.sp * (-0.006),
                 textAlign = TextAlign.Start
             ),
             modifier = Modifier.fillMaxWidth()

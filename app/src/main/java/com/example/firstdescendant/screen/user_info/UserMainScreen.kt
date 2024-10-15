@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
@@ -64,7 +65,6 @@ fun UserMainScreen(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-
         OutlinedTextField(
             value = textField.value,
             onValueChange = {
@@ -140,23 +140,33 @@ fun UserMainScreen(
             }
         }
     }
+}
 
-
-    //TODO: 일단 보류
-    @Composable
-    fun LevelBox(
-        level: Int
+//TODO: 일단 보류
+@Composable
+fun LevelBox(
+    level: Int
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(1.dp)
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(1.dp)
-        ) {
-            for (i in 1..level) {
-                Box(
-                    modifier = Modifier
-                        .size(5.dp, 2.dp)
-                        .background(Color.Red)
-                )
-            }
+        for (i in 1..level) {
+            Box(
+                modifier = Modifier
+                    .size(5.dp, 2.dp)
+                    .background(Color.Red)
+            )
         }
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun UserMainScreenPreview() {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        UserMainScreen(TestScreenViewModel())
     }
 }
