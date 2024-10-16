@@ -2,7 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="CustomTextFieldPreview">
+      <entry key="DescendantImageBoxPreview">
+        <State />
+      </entry>
+      <entry key="UserMainScreenPreview">
         <State />
       </entry>
       <entry key="app">

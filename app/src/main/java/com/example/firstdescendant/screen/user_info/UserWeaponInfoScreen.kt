@@ -15,18 +15,19 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.firstdescendant.data.user.module.UserModuleInfo
 import com.example.firstdescendant.data.user.weapon.UserWeaponModule
-import com.example.firstdescendant.data.user.weapon.UserWeaponData
-import com.example.firstdescendant.data.user.weapon.UserWeaponInfo
 import com.example.firstdescendant.data.user.weapon.UserWeapon
+import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
 import com.example.firstdescendant.ui.theme.moduleBorderColor
 import com.example.firstdescendant.ui.theme.moduleCenterColor
 import com.example.firstdescendant.ui.theme.rareColor
@@ -35,25 +36,26 @@ import com.example.firstdescendant.ui.theme.standardColor
 
 @Composable
 fun UserWeaponInfoScreen(
-    userWeapon: UserWeaponData,
-    userWeaponInfo: List<UserWeaponInfo>,
-    userModulesInfo: List<UserModuleInfo>
+    viewModel: TestScreenViewModel,
 ) {
-    val weaponID = userWeapon.weapon.map { it.weapon_id }
+    val userWeaponInfo by viewModel.userWeaponInfo.collectAsStateWithLifecycle()
+    val userWeapon by viewModel.userWeapon.collectAsStateWithLifecycle()
+    val userModulesInfo by viewModel.userModule.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        for(i in 0 until userWeapon.weapon.size) {
-            Text(text = "무기 ID(무기 이름) : ${userWeaponInfo[i].weapon_name}")
-            Text(text = "무기 레벨 : ${userWeapon.weapon[i].weapon_level}")
-            Text(text = "고유 능력 강화 레벨 : ${userWeapon.weapon[i].perk_ability_enchant_level ?: "레벨 없음"}")
+        for(i in 0 until userWeaponInfo.weapon.size) {
+            Text(text = "무기 ID(무기 이름) : ${userWeapon[i].weapon_name}")
+            Text(text = "무기 레벨 : ${userWeaponInfo.weapon[i].weapon_level}")
+            Text(text = "고유 능력 강화 레벨 : ${userWeaponInfo.weapon[i].perk_ability_enchant_level ?: "레벨 없음"}")
             Text(text = "무기 강화 레벨 : ")
-            Text(text = "무기 최대 모듈 수용량 : ${userWeapon.weapon[i].module_max_capacity}")
-            Text(text = "무기 실제 적용된 수용량 : ${userWeapon.weapon[i].module_capacity}")
-            if (userWeapon.weapon[i].weapon_additional_stat.isNullOrEmpty()) {
+            Text(text = "무기 최대 모듈 수용량 : ${userWeaponInfo.weapon[i].module_max_capacity}")
+            Text(text = "무기 실제 적용된 수용량 : ${userWeaponInfo.weapon[i].module_capacity}")
+            if (userWeaponInfo.weapon[i].weapon_additional_stat.isNullOrEmpty()) {
                 Text(text = "추가 스탯 없음")
             } else {
-                userWeapon.weapon[i].weapon_additional_stat?.take(4)?.forEach { stat ->
+                userWeaponInfo.weapon[i].weapon_additional_stat?.take(4)?.forEach { stat ->
                     Text(
                         text = "${stat.additional_stat_name} = ${stat.additional_stat_value}"
                     )
@@ -69,7 +71,7 @@ fun UserWeaponInfoScreen(
                 }*/
                 item {
                     WeaponModuleLayout(
-                        userWeapon = userWeapon.weapon[i],
+                        userWeapon = userWeaponInfo.weapon[i],
                         weaponModuleInfo = userModulesInfo
                     )
                 }

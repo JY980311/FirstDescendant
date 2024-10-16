@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
+import com.example.firstdescendant.navigation.NavigationGraph
 import com.example.firstdescendant.screen.user_info.UserMainScreen
 import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
 import com.example.firstdescendant.ui.theme.FirstDescendantTheme
@@ -21,7 +23,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    UserMainScreen(TestScreenViewModel())
+                    val navController = rememberNavController()
+                    
+                    NavigationGraph(navController = navController)
                 } /* 27564108#1784 */
             }
         }

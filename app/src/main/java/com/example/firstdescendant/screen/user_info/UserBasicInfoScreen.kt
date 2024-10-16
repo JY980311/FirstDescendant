@@ -3,16 +3,19 @@ package com.example.firstdescendant.screen.user_info
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.example.firstdescendant.data.user.basicinfo.UserBasicData
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
 
 @Composable
 fun UserBasicInfoScreen(
-    userBasic: UserBasicData,
+    viewModel: TestScreenViewModel,
 ) {
+    val userBasic by viewModel.basicInfo.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
-
     ) {
         Text(text = "닉네임 : ${userBasic.user_name}")
         Text(text = "게임에 사용하는 언어 : ${userBasic.game_language}")

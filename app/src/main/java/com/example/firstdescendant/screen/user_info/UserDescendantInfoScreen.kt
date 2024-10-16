@@ -2,6 +2,7 @@ package com.example.firstdescendant.screen.user_info
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,16 +14,28 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.example.firstdescendant.component.DescendantImageBox
 import com.example.firstdescendant.data.user.descendantinfo.UserDescendantData
+import com.example.firstdescendant.data.user.descendantinfo.UserDescendantName
 import com.example.firstdescendant.data.user.descendantinfo.UserModule
 import com.example.firstdescendant.data.user.module.UserModuleInfo
+import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
+import com.example.firstdescendant.ui.theme.DescendantTypography
+import com.example.firstdescendant.ui.theme.mainBackgroundColor
 import com.example.firstdescendant.ui.theme.moduleBorderColor
 import com.example.firstdescendant.ui.theme.moduleCenterColor
 import com.example.firstdescendant.ui.theme.rareColor
@@ -32,21 +45,54 @@ import com.example.firstdescendant.ui.theme.transcendentColor
 
 @Composable
 fun UserDescendantInfoScreen(
-    userDescendantInfo: UserDescendantData,
-    userModules: List<UserModule>,
-    userModulesInfo: List<UserModuleInfo>
+    viewModel: TestScreenViewModel,
 ) {
+    val userDescendantInfo by viewModel.userDescendantInfo.collectAsStateWithLifecycle()
+    val userDescendant by viewModel.userDescendant.collectAsStateWithLifecycle()
+    val userModulesInfo by viewModel.userModule.collectAsStateWithLifecycle()
+    val userModules = userDescendantInfo.module
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(16.dp)
     ) {
+
+        Text(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)){
+                    append("DESCENDANT")
+                }
+                withStyle(style = SpanStyle(fontSize = 18.sp)) {
+                    append(" INFO")
+                }
+            },
+            style = DescendantTypography.headLineText
+        )
+        DescendantImageBox(
+            modifier = Modifier.padding(top = 60.dp,bottom = 20.dp),
+            imageUrl = userDescendant.descendant_image_url
+        )
         Text(text = "사용자 이름 : ${userDescendantInfo.user_name}")
-        Text(text = "계승자 이름 : ${userDescendantInfo.descendant_id}")
+        Text(text = "계승자 이름 : ${userDescendant.descendant_name}")
         Text(text = "계승자 레벨 : ${userDescendantInfo.descendant_level}")
-        Text(text = "계승자 슬롯 위치 : ${userDescendantInfo.descendant_slot_id}")
-        Text(text = "모듈 용량 : ${userDescendantInfo.module_capacity}")
-        Text(text = "모듈 최대 용량 : ${userDescendantInfo.module_max_capacity}")
-        Text(text = "모듈 : ")
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 50.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            Text(text = "[모듈]")
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ){
+                Text(text = "현재 용량 : ${userDescendantInfo.module_capacity}")
+                Text(text = "최대 용량 : ${userDescendantInfo.module_max_capacity}")
+            }
+        }
+
 
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
@@ -188,5 +234,19 @@ fun ModuleLayout(
                 } ?: ModuleBox(userModules = emptyList(), userModulesInfo = userModulesInfo)
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun UserDescendantInfoScreenPreview() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(mainBackgroundColor)
+    ) {
+        UserDescendantInfoScreen(
+            viewModel = TestScreenViewModel()
+        )
     }
 }

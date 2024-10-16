@@ -4,45 +4,43 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import com.example.firstdescendant.component.CustomBoxButton
+import com.example.firstdescendant.component.CustomTextField
+import com.example.firstdescendant.navigation.BASICINFOSCREEN_ROUTE
+import com.example.firstdescendant.navigation.REACTORINFOSCREEN_ROUTE
 import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
+import com.example.firstdescendant.ui.theme.DescendantTypography
 
 @Composable
 fun UserMainScreen(
+    navHostController: NavHostController,
     viewModel: TestScreenViewModel
 ) {
 
     val ouid = viewModel.test.collectAsStateWithLifecycle()
-
-    val basicInfo = viewModel.basicInfo.collectAsStateWithLifecycle()
-
-    val descendantInfo = viewModel.descendantInfo.collectAsStateWithLifecycle()
-
-    val userWeaponInfo = viewModel.userWeaponInfo.collectAsStateWithLifecycle()
-
-    val userExternalInfo = viewModel.userExternalInfo.collectAsStateWithLifecycle()
-
-    val userExternal = viewModel.userExternal.collectAsStateWithLifecycle()
-
-    val userWeapon = viewModel.userWeapon.collectAsStateWithLifecycle()
-
-    val userReactorInfo = viewModel.userReactorInfo.collectAsStateWithLifecycle()
-
-    val userReactorImage = viewModel.userReactorImage.collectAsStateWithLifecycle()
 
     val reactorNameReady = viewModel.isReactorNameReady.collectAsStateWithLifecycle()
 
@@ -56,91 +54,109 @@ fun UserMainScreen(
 
     val errorMessage = viewModel.errorMessage.collectAsStateWithLifecycle()
 
-    val userModuleInfo by viewModel.userModule.collectAsStateWithLifecycle()
+    val isLoading = viewModel.isLoading.collectAsStateWithLifecycle()
 
+    val nextScreenRoute = viewModel.nextScreenRoute.collectAsStateWithLifecycle()
+
+    LaunchedEffect(isLoading.value) {
+        if (!isLoading.value && nextScreenRoute.value != null) {
+            navHostController.navigate(nextScreenRoute.value!!)
+            viewModel.resetNextScreenRoute()
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        OutlinedTextField(
-            value = textField.value,
-            onValueChange = {
-                viewModel.getText(it)
+        Text(
+            text = buildAnnotatedString {
+                withStyle(SpanStyle(fontSize = 18.sp))
+                {
+                    append(" THE ")
+                }
+                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("FIRST")
+                    append("\nDESCENDANT")
+                }
             },
+            style = DescendantTypography.headLineText
         )
 
-        Button(onClick = {
-            viewModel.getOuid()
-        }) {
-            Text(text = "사용자 조회")
+        CustomTextField(
+            value = textField.value,
+            onValueChange = { viewModel.getText(it) }
+        )
+
+        CustomBoxButton(
+            modifier = Modifier.height(50.dp),
+            onClick = { viewModel.getOuid() },
+            text = "사용자 조회"
+        )
+
+        if (errorMessage.value != "") {
+            Text(text = errorMessage.value)
+        } else if (ouid.value.ouid != "") {
+            Text(text = "존재하는 유저")
         }
 
-        Text(text = if (errorMessage.value == "") ouid.value.ouid else errorMessage.value)
-
-        Button(onClick = {
-            viewModel.getBasicInfo()
-        }) {
-            Text(text = "사용자 기본 정보 조회")
+        if (isLoading.value) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         }
-
-        Button(onClick = {
-            viewModel.getDescendantInfo()
-        }) {
-            Text(text = "장착 계승자 정보 조회")
-        }
-
-        Button(onClick = {
-            viewModel.getUserWeaponInfo()
-        }) {
-            Text(text = "장착 무기 정보 조회")
-        }
-
-        Button(onClick = {
-            viewModel.getUserReactorInfo()
-        }) {
-            Text(text = "장착 반응로 정보 조회")
-        }
-
-        Button(onClick = {
-            viewModel.getUserExternalInfo()
-        }) {
-            Text(text = "장착 외장부품 정보 조회")
-        }
-
-        if (basicInfo.value.user_name != "") {
-            UserBasicInfoScreen(userBasic = basicInfo.value)
-        }
-        if (descendantNameReady.value) {
-            UserDescendantInfoScreen(
-                userDescendantInfo = descendantInfo.value,
-                userModules = descendantInfo.value.module,
-                userModulesInfo = userModuleInfo
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 40.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            CustomBoxButton(
+                modifier = Modifier,
+                onClick = {
+                    viewModel.getUserBasicInfo()
+                },
+                text = "사용자 기본 정보 조회"
             )
-            if (weaponNameReady.value) {
-                UserWeaponInfoScreen(
-                    userWeapon = userWeaponInfo.value,
-                    userWeaponInfo = userWeapon.value,
-                    userModulesInfo = userModuleInfo
-                )
-            }
-            if (reactorNameReady.value) {
-                UserReactorInfoScreen(
-                    userReactorInfo = userReactorInfo.value,
-                    userReactorImage = userReactorImage.value
-                )
-            }
-            if (externalNameReady.value) {
-                UserExternalInfoScreen(
-                    userExternal = userExternal.value,
-                    userExternalInfo = userExternalInfo.value
-                )
-            }
+
+            CustomBoxButton(
+                modifier = Modifier,
+                onClick = {
+                    viewModel.getUserDescendantInfo()
+                },
+                text = "장착 계승자 정보 조회"
+            )
         }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            CustomBoxButton(
+                onClick = {
+                    viewModel.getUserWeaponInfo()
+                },
+                text = "장착 무기 정보 조회"
+            )
+
+            CustomBoxButton(
+                onClick = {
+                    viewModel.getUserReactorInfo()
+                },
+                text = "장착 반응로 정보 조회"
+            )
+        }
+
+        CustomBoxButton(
+            onClick = {
+                viewModel.getUserExternalInfo()
+            },
+            text = "장착 외장부품 정보 조회"
+        )
     }
 }
+
 
 //TODO: 일단 보류
 @Composable
@@ -157,16 +173,5 @@ fun LevelBox(
                     .background(Color.Red)
             )
         }
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun UserMainScreenPreview() {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        UserMainScreen(TestScreenViewModel())
     }
 }

@@ -23,10 +23,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.firstdescendant.R
+import com.example.firstdescendant.ui.theme.DescendantTypography
 import com.example.firstdescendant.ui.theme.focusedBorderColor
 import com.example.firstdescendant.ui.theme.textFieldInnerColor
 import com.example.firstdescendant.ui.theme.textFieldPlaceholderColor
@@ -34,6 +38,7 @@ import com.example.firstdescendant.ui.theme.unFocusedBorderColor
 
 @Composable
 fun CustomTextField(
+    modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit
 ) {
@@ -41,7 +46,7 @@ fun CustomTextField(
     val focused = interactionSource.collectIsFocusedAsState().value
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(4.dp))
             .fillMaxWidth()
             .height(40.dp)
@@ -54,23 +59,14 @@ fun CustomTextField(
         if (value.isEmpty()) {
             Text(
                 text = "abcd#1234",
-                color = textFieldPlaceholderColor,
-                fontSize = 12.sp,
-                lineHeight = 12.sp * 1.5,
-                letterSpacing = 12.sp * (-0.006)
+                style = DescendantTypography.placeholderText
             )
         }
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
             interactionSource = interactionSource,
-            textStyle = TextStyle(
-                color = Color.White,
-                fontSize = 18.sp,
-                lineHeight = 18.sp * 1.5,
-                letterSpacing = 18.sp * (-0.006),
-                textAlign = TextAlign.Start
-            ),
+            textStyle = DescendantTypography.textFieldText,
             modifier = Modifier.fillMaxWidth()
         )
     }

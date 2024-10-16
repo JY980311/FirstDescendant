@@ -4,7 +4,7 @@ import com.example.firstdescendant.data.user.descendantinfo.UserDescendantName
 import com.example.firstdescendant.data.user.external.UserExternalName
 import com.example.firstdescendant.data.user.module.UserModuleInfo
 import com.example.firstdescendant.data.user.reactor.UserReactorImage
-import com.example.firstdescendant.data.user.reactor.UserReactorName
+import com.example.firstdescendant.data.user.reactor.UserReactorInfo
 import com.example.firstdescendant.data.user.weapon.UserWeaponInfo
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -13,23 +13,16 @@ interface SupabaseApiService {
 
     @GET("D_descendant")
     suspend fun getUserDescendantName(
-        @Query("select") select: String = "descendant_name",
+        @Query("select") select: String = "descendant_name,descendant_image_url",
         @Query("main_descendant_id") main_descendant_id: String,
         @Query("apikey") apikey: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3Y3J0cGlvbndla2duYnByaGNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY4MDc4NDksImV4cCI6MjA0MjM4Mzg0OX0.HCwdgujxTeGzUpvQK0czV1dNyM70Z7weqGWDz6U1WgY"
     ): List<UserDescendantName>
     @GET("R_reactors")
     suspend fun getUserReactorName(
-        @Query("select") select: String = "reactor_name",
+        @Query("select") select: String = "reactor_name,image_url",
         @Query("main_reactor_id") main_reactor_id: String,
         @Query("apikey") apikey: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3Y3J0cGlvbndla2duYnByaGNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY4MDc4NDksImV4cCI6MjA0MjM4Mzg0OX0.HCwdgujxTeGzUpvQK0czV1dNyM70Z7weqGWDz6U1WgY"
-    ):  List<UserReactorName>
-
-    @GET("R_reactors")
-    suspend fun getUserReactorImage(
-        @Query("select") select: String = "image_url",
-        @Query("main_reactor_id") main_reactor_id: String,
-        @Query("apikey") apikey: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3Y3J0cGlvbndla2duYnByaGNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY4MDc4NDksImV4cCI6MjA0MjM4Mzg0OX0.HCwdgujxTeGzUpvQK0czV1dNyM70Z7weqGWDz6U1WgY"
-    ): List<UserReactorImage>
+    ):  List<UserReactorInfo>
 
     @GET("M_module")
     suspend fun getUserModuleName(

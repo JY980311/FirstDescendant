@@ -22,9 +22,13 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
+    primary = mainBackgroundColor,
     secondary = PurpleGrey40,
-    tertiary = Pink40
+    tertiary = Pink40,
+    background = mainBackgroundColor,
+    onBackground = mainBackgroundColor,
+    surface = mainBackgroundColor,
+    onSurface = mainBackgroundColor
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -36,7 +40,6 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Color(0xFF1C1B1F),
     */
 )
-
 @Composable
 fun FirstDescendantTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -50,7 +53,7 @@ fun FirstDescendantTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
+        darkTheme -> LightColorScheme
         else -> LightColorScheme
     }
     val view = LocalView.current
