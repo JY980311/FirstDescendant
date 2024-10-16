@@ -13,7 +13,7 @@ import com.example.firstdescendant.R
 object DescendantTypography {
     val headLineText = TextStyle(
         fontFamily = FontFamily(Font(R.font.dohyeon)),
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 25.sp,
         lineHeight = 18.sp * 1.5,
         letterSpacing = 25.sp * (-0.006),
@@ -54,6 +54,24 @@ object DescendantTypography {
         fontSize = 16.sp,
         lineHeight = 16.sp * 1.5,
         letterSpacing = 16.sp * (-0.006),
+        color = Color.White
+    )
+
+    val weaponMainText = TextStyle(
+        fontFamily = FontFamily(Font(R.font.dohyeon)),
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp,
+        lineHeight = 20.sp * 1.5,
+        letterSpacing = 20.sp * (-0.006),
+        color = Color.White
+    )
+
+    val weaponLevelText = TextStyle(
+        fontFamily = FontFamily(Font(R.font.dohyeon)),
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 14.sp * 1.5,
+        letterSpacing = 14.sp * (-0.006),
         color = Color.White
     )
 }

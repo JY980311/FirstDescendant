@@ -3,7 +3,6 @@ package com.example.firstdescendant.network
 import com.example.firstdescendant.data.user.descendantinfo.UserDescendantName
 import com.example.firstdescendant.data.user.external.UserExternalName
 import com.example.firstdescendant.data.user.module.UserModuleInfo
-import com.example.firstdescendant.data.user.reactor.UserReactorImage
 import com.example.firstdescendant.data.user.reactor.UserReactorInfo
 import com.example.firstdescendant.data.user.weapon.UserWeaponInfo
 import retrofit2.http.GET

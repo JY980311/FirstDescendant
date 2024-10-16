@@ -42,14 +42,6 @@ fun UserMainScreen(
 
     val ouid = viewModel.test.collectAsStateWithLifecycle()
 
-    val reactorNameReady = viewModel.isReactorNameReady.collectAsStateWithLifecycle()
-
-    val descendantNameReady = viewModel.isDescendantNameReady.collectAsStateWithLifecycle()
-
-    val weaponNameReady = viewModel.isWeaponNameReady.collectAsStateWithLifecycle()
-
-    val externalNameReady = viewModel.isExternalNameReady.collectAsStateWithLifecycle()
-
     val textField = viewModel.textField.collectAsStateWithLifecycle()
 
     val errorMessage = viewModel.errorMessage.collectAsStateWithLifecycle()

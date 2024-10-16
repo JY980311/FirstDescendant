@@ -8,10 +8,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -56,8 +59,8 @@ fun UserDescendantInfoScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .verticalScroll(rememberScrollState())
     ) {
-
         Text(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)){
@@ -69,13 +72,25 @@ fun UserDescendantInfoScreen(
             },
             style = DescendantTypography.headLineText
         )
-        DescendantImageBox(
-            modifier = Modifier.padding(top = 60.dp,bottom = 20.dp),
-            imageUrl = userDescendant.descendant_image_url
-        )
-        Text(text = "사용자 이름 : ${userDescendantInfo.user_name}")
-        Text(text = "계승자 이름 : ${userDescendant.descendant_name}")
-        Text(text = "계승자 레벨 : ${userDescendantInfo.descendant_level}")
+        Row(
+            modifier = Modifier
+                .padding(top = 60.dp, bottom = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(15.dp)
+        ){
+            DescendantImageBox(
+                modifier = Modifier
+                    .height(280.dp),
+                imageUrl = userDescendant.descendant_image_url
+            )
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(text = "사용자 이름 : ${userDescendantInfo.user_name}")
+                Text(text = "계승자 이름 : ${userDescendant.descendant_name}")
+                Text(text = "계승자 레벨 : ${userDescendantInfo.descendant_level}")
+            }
+        }
 
         Row(
             modifier = Modifier
