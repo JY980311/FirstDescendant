@@ -31,9 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.example.firstdescendant.component.DescendantImageBox
-import com.example.firstdescendant.data.user.descendantinfo.UserDescendantData
-import com.example.firstdescendant.data.user.descendantinfo.UserDescendantName
+import com.example.firstdescendant.component.CustomImageBox
 import com.example.firstdescendant.data.user.descendantinfo.UserModule
 import com.example.firstdescendant.data.user.module.UserModuleInfo
 import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
@@ -77,7 +75,7 @@ fun UserDescendantInfoScreen(
                 .padding(top = 60.dp, bottom = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(15.dp)
         ){
-            DescendantImageBox(
+            CustomImageBox(
                 modifier = Modifier
                     .height(280.dp),
                 imageUrl = userDescendant.descendant_image_url

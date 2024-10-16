@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,17 +23,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.example.firstdescendant.component.DescendantImageBox
+import com.example.firstdescendant.component.CustomImageBox
+import com.example.firstdescendant.component.WeaponEnchantLevelBox
 import com.example.firstdescendant.data.user.module.UserModuleInfo
 import com.example.firstdescendant.data.user.weapon.UserWeaponModule
 import com.example.firstdescendant.data.user.weapon.UserWeapon
@@ -79,11 +79,9 @@ fun UserWeaponInfoScreen(
                 Text(text = "무기 정보가 없습니다.")
             }
         } else {
-            Spacer(modifier = Modifier.height(60.dp))
-
             for (i in 0 until userWeaponInfo.weapon.size) {
                 Column(
-                    modifier = Modifier.padding(vertical = 20.dp)
+                    modifier = Modifier.padding(top = 60.dp, bottom = 10.dp)
                 ) {
                     Row(
                         modifier = Modifier
@@ -105,25 +103,49 @@ fun UserWeaponInfoScreen(
                             )
                         }
                     }
-                    DescendantImageBox(
+                    CustomImageBox(
                         modifier = Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .padding(bottom = 4.dp),
                         imageUrl = userWeapon[i].image_url
                     )
+                    WeaponEnchantLevelBox(
+                        userWeaponInfo.weapon[i].perk_ability_enchant_level
+                    )
                 }
+
                 Text(text = "고유 능력 강화 레벨 : ${userWeaponInfo.weapon[i].perk_ability_enchant_level ?: "레벨 없음"}")
-                Text(text = "무기 최대 모듈 수용량 : ${userWeaponInfo.weapon[i].module_max_capacity}")
-                Text(text = "무기 실제 적용된 수용량 : ${userWeaponInfo.weapon[i].module_capacity}")
+
                 if (userWeaponInfo.weapon[i].weapon_additional_stat.isNullOrEmpty()) {
                     Text(text = "추가 스탯 없음")
                 } else {
                     userWeaponInfo.weapon[i].weapon_additional_stat?.take(4)?.forEach { stat ->
                         Text(
+                            modifier = Modifier.padding(vertical = 1.dp),
                             text = "${stat.additional_stat_name} = ${stat.additional_stat_value}"
+                        )
+                        //가로선 추가
+                        Spacer(modifier = Modifier
+                            .height(1.dp)
+                            .fillMaxWidth()
+                            .background(Color.White)
                         )
                     }
                 }
-                Text(text = "무기 모듈 : ")
+
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "[무기 모듈]")
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(text = "현재 용량 : ${userWeaponInfo.weapon[i].module_capacity}")
+                        Text(text = "최대 용량 : ${userWeaponInfo.weapon[i].module_max_capacity}")
+                    }
+                }
 
                 LazyRow(
                     modifier = Modifier.fillMaxWidth(),

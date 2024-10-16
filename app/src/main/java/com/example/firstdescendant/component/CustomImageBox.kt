@@ -17,7 +17,7 @@ import coil.compose.AsyncImage
 import com.example.firstdescendant.ui.theme.mainBackgroundColor
 
 @Composable
-fun DescendantImageBox(
+fun CustomImageBox(
     modifier: Modifier = Modifier,
     imageUrl: String,
 ) {
@@ -30,7 +30,7 @@ fun DescendantImageBox(
         AsyncImage(
             modifier = Modifier.fillMaxSize(),
             model = imageUrl,
-            contentDescription = "장착 계승자 이미지",
+            contentDescription = "데이터 이미지",
             contentScale = androidx.compose.ui.layout.ContentScale.Crop
         )
     }
@@ -44,7 +44,7 @@ fun DescendantImageBoxPreview() {
             .fillMaxSize()
             .background(mainBackgroundColor)
     ) {
-        DescendantImageBox(
+        CustomImageBox(
             imageUrl = "https://open.api.nexon.com/static/tfd/img/133a00069f113afbdcd05b7bfc4c2cfa"
         )
     }
