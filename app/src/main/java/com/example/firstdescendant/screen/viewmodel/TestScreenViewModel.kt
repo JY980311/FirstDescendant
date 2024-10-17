@@ -9,6 +9,7 @@ import com.example.firstdescendant.data.user.descendantinfo.UserDescendantName
 import com.example.firstdescendant.data.user.external.UserExternalData
 import com.example.firstdescendant.data.user.external.UserExternalName
 import com.example.firstdescendant.data.user.module.UserModuleInfo
+import com.example.firstdescendant.data.user.module.UserModuleStatInfo
 import com.example.firstdescendant.data.user.ouid.UserOuid
 import com.example.firstdescendant.data.user.reactor.UserReactorData
 import com.example.firstdescendant.data.user.reactor.UserReactorInfo
@@ -49,6 +50,10 @@ class TestScreenViewModel : ViewModel() {
     private val _user_module = MutableStateFlow<List<UserModuleInfo>>(emptyList())
     val userModule = _user_module.asStateFlow()
 
+    /*private val _user_moduleStat = MutableStateFlow<List<UserModuleStatInfo>>(emptyList())
+    val userModuleStat = _user_moduleStat.asStateFlow()
+    */
+
     /** 사용자 무기 정보 */
     private val _user_weaponInfo = MutableStateFlow(UserWeaponData("", "", emptyList()))
     val userWeaponInfo = _user_weaponInfo.asStateFlow()
@@ -58,11 +63,12 @@ class TestScreenViewModel : ViewModel() {
     val userWeapon = _user_weapon.asStateFlow()
 
     /** 사용자 반응로 정보 */
-    private val _user_reactorInfo = MutableStateFlow(UserReactorData("", emptyList(), 0, "", 0, "", ""))
+    private val _user_reactorInfo =
+        MutableStateFlow(UserReactorData("", emptyList(), 0, "", 0, "", ""))
     val userReactorInfo = _user_reactorInfo.asStateFlow()
 
     /** 사용자 반응로 이미지 정보 */
-    private val _user_reactor = MutableStateFlow(UserReactorInfo("",""))
+    private val _user_reactor = MutableStateFlow(UserReactorInfo("", ""))
     val userReactorImage = _user_reactor.asStateFlow()
 
     /** 사용자 외부 구성 요소 정보 */
@@ -283,6 +289,7 @@ class TestScreenViewModel : ViewModel() {
                     _user_descendantInfo.value = apiResponse
 
                     getDescendantInfo(_user_descendantInfo.value.descendant_id)
+                    //getDescendantModuleStat()
                     getDescendantModule()
 
                     Log.d(
@@ -343,6 +350,32 @@ class TestScreenViewModel : ViewModel() {
             }
         }
     }
+
+    /*private fun getDescendantModuleStat() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val apiService = RetrofitClient.getSupabaseApiService()
+            try {
+                val moduleIds = _user_descendantInfo.value.module.map { it.module_id }
+                val level = _user_descendantInfo.value.module.map { it.module_enchant_level }
+
+                val apiResponse = apiService.getUserModuleStat(
+                    select = "module_id,module_capacity,value",
+                    module_id = "in.(${moduleIds.joinToString(",")})",
+                    level = "in.(${level.joinToString(",")})"
+                )
+
+                _user_moduleStat.value = apiResponse
+
+            } catch (
+                e: Exception
+            ) {
+                Log.e("ViewModel - getModuleStat[ERROR]", "error: ${e.message}", e)
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }*/
 
     fun getUserExternalInfo() {
         viewModelScope.launch {
