@@ -3,6 +3,7 @@ package com.example.firstdescendant.network
 import com.example.firstdescendant.data.user.descendantinfo.UserDescendantName
 import com.example.firstdescendant.data.user.external.UserExternalName
 import com.example.firstdescendant.data.user.module.UserModuleInfo
+import com.example.firstdescendant.data.user.module.UserModuleStatInfo
 import com.example.firstdescendant.data.user.reactor.UserReactorInfo
 import com.example.firstdescendant.data.user.weapon.UserWeaponInfo
 import retrofit2.http.GET
@@ -30,6 +31,13 @@ interface SupabaseApiService {
         @Query("apikey") apikey: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3Y3J0cGlvbndla2duYnByaGNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY4MDc4NDksImV4cCI6MjA0MjM4Mzg0OX0.HCwdgujxTeGzUpvQK0czV1dNyM70Z7weqGWDz6U1WgY"
     ): List<UserModuleInfo>
 
+    @GET("M_module_stat")
+    suspend fun getUserModuleStat(
+        @Query("select") select: String = "module_id,module_capacity,value", //value은 마음대로
+        @Query("module_id") module_id: String,
+        @Query("level") level: String,
+        @Query("apikey") apikey: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3Y3J0cGlvbndla2duYnByaGNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY4MDc4NDksImV4cCI6MjA0MjM4Mzg0OX0.HCwdgujxTeGzUpvQK0czV1dNyM70Z7weqGWDz6U1WgY"
+    ): List<UserModuleStatInfo>
     @GET("W_weapon")
     suspend fun getUserWeaponNameImage(
         @Query("select") select: String = "main_weapon_id,weapon_name,image_url",
