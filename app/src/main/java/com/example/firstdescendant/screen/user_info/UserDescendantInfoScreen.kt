@@ -34,6 +34,7 @@ import coil.compose.AsyncImage
 import com.example.firstdescendant.component.CustomImageBox
 import com.example.firstdescendant.data.user.descendantinfo.UserModule
 import com.example.firstdescendant.data.user.module.UserModuleInfo
+import com.example.firstdescendant.data.user.module.UserModuleStatInfo
 import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
 import com.example.firstdescendant.ui.theme.DescendantTypography
 import com.example.firstdescendant.ui.theme.mainBackgroundColor
@@ -111,7 +112,10 @@ fun UserDescendantInfoScreen(
             modifier = Modifier.fillMaxWidth(),
         ) {
             item {
-                ModuleLayout(userModules = userModules, userModulesInfo = userModulesInfo)
+                ModuleLayout(
+                    userModules = userModules,
+                    userModulesInfo = userModulesInfo
+                )
             }
         }
     }
@@ -121,7 +125,7 @@ fun UserDescendantInfoScreen(
 @Composable
 fun ModuleBox(
     userModules: List<UserModule>,
-    userModulesInfo: List<UserModuleInfo>
+    userModulesInfo: List<UserModuleInfo>,
 ) {
     val transcendentModule = arrayOf(
         0.1f to transcendentColor,
@@ -178,24 +182,30 @@ fun ModuleBox(
                 else -> standardModule
             }
             Column(
+                modifier = Modifier,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Box(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .size(100.dp)
-                        .background(
-                            Brush.linearGradient(colorStops = colorGradient),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .border(1.dp, moduleBorderColor, RoundedCornerShape(8.dp))
+                Column(
+                    modifier = Modifier,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    AsyncImage(
-                        model = matchingModule?.image_url ?: "",
-                        contentDescription = "모듈 이미지",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop,
-                    )
+                    Box(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(100.dp)
+                            .background(
+                                Brush.linearGradient(colorStops = colorGradient),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .border(1.dp, moduleBorderColor, RoundedCornerShape(8.dp))
+                    ) {
+                        AsyncImage(
+                            model = matchingModule?.image_url ?: "",
+                            contentDescription = "모듈 이미지",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
                 }
                 Row {
                     Text(
@@ -231,20 +241,38 @@ fun ModuleLayout(
         }
 
         Row(modifier = Modifier.fillMaxWidth()) {
-            ModuleBox(userModules = skillModule, userModulesInfo = userModulesInfo)
+            ModuleBox(
+                userModules = skillModule,
+                userModulesInfo = userModulesInfo,
+            )
             for (i in listOf(0, 2, 4, 6, 8)) {
                 sortedMainUserModules[i]?.let { module ->
-                    ModuleBox(userModules = listOf(module), userModulesInfo = userModulesInfo)
-                } ?: ModuleBox(userModules = emptyList(), userModulesInfo = userModulesInfo)
+                    ModuleBox(
+                        userModules = listOf(module),
+                        userModulesInfo = userModulesInfo,
+                    )
+                } ?: ModuleBox(
+                    userModules = emptyList(),
+                    userModulesInfo = userModulesInfo,
+                )
             }
         }
 
         Row(modifier = Modifier.fillMaxWidth()) {
-            ModuleBox(userModules = subModule, userModulesInfo = userModulesInfo)
+            ModuleBox(
+                userModules = subModule,
+                userModulesInfo = userModulesInfo,
+            )
             for (i in listOf(1, 3, 5, 7, 9)) {
                 sortedMainUserModules[i]?.let { module ->
-                    ModuleBox(userModules = listOf(module), userModulesInfo = userModulesInfo)
-                } ?: ModuleBox(userModules = emptyList(), userModulesInfo = userModulesInfo)
+                    ModuleBox(
+                        userModules = listOf(module),
+                        userModulesInfo = userModulesInfo,
+                    )
+                } ?: ModuleBox(
+                    userModules = emptyList(),
+                    userModulesInfo = userModulesInfo,
+                )
             }
         }
     }
