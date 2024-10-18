@@ -1,5 +1,10 @@
 package com.example.firstdescendant.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -16,7 +21,10 @@ import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
 fun NavigationGraph(navController: NavHostController) {
     val viewModel = TestScreenViewModel()
 
-    NavHost(navController = navController, startDestination = MAINSCREEN_ROUTE) {
+    NavHost(
+        navController = navController,
+        startDestination = MAINSCREEN_ROUTE
+    ) {
         composable(MAINSCREEN_ROUTE){
             UserMainScreen(
                 navHostController = navController,

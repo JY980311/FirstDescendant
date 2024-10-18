@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,7 +43,7 @@ fun OnReactorLevelCircleBox(
 ){
     Box(
         modifier = modifier
-            .clip(CircleShape)
+            .clip(CutCornerShape(6.dp))
             .size(12.dp)
             .background(Color(0xFFFF562A))
     )
@@ -54,7 +55,7 @@ fun UnReactorLevelCircleBox(
 ){
     Box(
         modifier = modifier
-            .clip(CircleShape)
+            .clip(CutCornerShape(6.dp))
             .size(12.dp)
             .background(textFieldInnerColor)
     )

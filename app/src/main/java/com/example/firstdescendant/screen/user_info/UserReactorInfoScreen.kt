@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -44,11 +46,15 @@ fun UserReactorInfoScreen(
 ) {
     val userReactorInfo by viewModel.userReactorInfo.collectAsStateWithLifecycle()
     val userReactor by viewModel.userReactorImage.collectAsStateWithLifecycle()
+    val userReactorSkillPower by viewModel.userReactorSkillPower.collectAsStateWithLifecycle()
+    val reactorSkillCoefficient by viewModel.reactorCoefficient.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .statusBarsPadding()
+            .navigationBarsPadding()
     ) {
         Text(
             text = buildAnnotatedString {
@@ -68,6 +74,7 @@ fun UserReactorInfoScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
+                modifier = Modifier.padding(bottom = 4.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -77,7 +84,8 @@ fun UserReactorInfoScreen(
                 )
                 CustomImageBox(
                     modifier = Modifier.height(200.dp),
-                    imageUrl = userReactor.image_url
+                    imageUrl = userReactor.image_url,
+                    tier = userReactor.reactor_tier
                 )
             }
 
@@ -86,22 +94,48 @@ fun UserReactorInfoScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
                 ReactorEnchantLevelBox(userReactorInfo.reactor_enchant_level)
-                //Text(text = " (${userReactorInfo.reactor_enchant_level})")
                 Text(
                     text = "Lv.${userReactorInfo.reactor_level}",
                     style = DescendantTypography.weaponLevelText
                 )
             }
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Column(
+                modifier = Modifier.fillMaxSize().padding(top = 4.dp)
+            ) {
 
-            NameBox(text = "반응로 추가 능력")
+                Text(text = "스킬 위력 : ${userReactorSkillPower.skill_atk_power}")
+                Text(text = "보조 공격 위력 : ${userReactorSkillPower.sub_skill_atk_power}")
 
-            Spacer(modifier = Modifier.height(4.dp))
+                NameBox(
+                    modifier= Modifier.padding(vertical = 4.dp),
+                    text = "최적화 조건"
+                )
 
-            Text(
-                text = userReactorInfo.reactor_additional_stat.joinToString(""){"${it.additional_stat_name}\n${it.additional_stat_value}\n"}
-            )
+                Text(text = userReactor.optimized_condition_type)
+
+
+                NameBox(
+                    modifier= Modifier.padding(vertical = 4.dp),
+                    text = "스킬 위력 증가율"
+                )
+                
+                if(reactorSkillCoefficient.isNotEmpty()) {
+                    Text(text = "스킬 위력 증가율 [1] : ${reactorSkillCoefficient[0].coefficient_stat_id}")
+                    Text(text = "스킬 위력 증가율 수치 [1] : ${reactorSkillCoefficient[0].coefficient_stat_value}")
+                    Text(text = "스킬 위력 증가율 [2] : ${reactorSkillCoefficient[1].coefficient_stat_id}")
+                    Text(text = "스킬 위력 증가율 수치 [2] : ${reactorSkillCoefficient[1].coefficient_stat_value}")
+                }
+
+                NameBox(
+                    modifier= Modifier.padding(vertical = 4.dp),
+                    text = "반응로 옵션"
+                )
+
+                Text(
+                    text = userReactorInfo.reactor_additional_stat.joinToString(""){"${it.additional_stat_name}\n${it.additional_stat_value}\n"}
+                )
+            }
         }
     }
 }
@@ -167,9 +201,8 @@ fun UserReactorInfoScreenPreview() {
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            NameBox(text = "반응로 추가 능력")
+            NameBox(modifier = Modifier.padding(bottom = 4.dp),text = "반응로 추가 능력")
 
-            Spacer(modifier = Modifier.height(4.dp))
 
             Text(
                 text = userReactorInfo.reactor_additional_stat.joinToString(""){"${it.additional_stat_name}\n${it.additional_stat_value}\n"}

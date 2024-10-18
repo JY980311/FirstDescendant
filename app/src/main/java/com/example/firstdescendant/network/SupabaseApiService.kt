@@ -4,7 +4,9 @@ import com.example.firstdescendant.data.user.descendantinfo.UserDescendantName
 import com.example.firstdescendant.data.user.external.UserExternalName
 import com.example.firstdescendant.data.user.module.UserModuleInfo
 import com.example.firstdescendant.data.user.module.UserModuleStatInfo
+import com.example.firstdescendant.data.user.reactor.ReactorSkillCoefficient
 import com.example.firstdescendant.data.user.reactor.UserReactorInfo
+import com.example.firstdescendant.data.user.reactor.UserReactorSkillPower
 import com.example.firstdescendant.data.user.weapon.UserWeaponInfo
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -23,6 +25,22 @@ interface SupabaseApiService {
         @Query("main_reactor_id") main_reactor_id: String,
         @Query("apikey") apikey: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3Y3J0cGlvbndla2duYnByaGNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY4MDc4NDksImV4cCI6MjA0MjM4Mzg0OX0.HCwdgujxTeGzUpvQK0czV1dNyM70Z7weqGWDz6U1WgY"
     ):  List<UserReactorInfo>
+
+    @GET("R_reactor_skill_power")
+    suspend fun getUserReactorSkillPower(
+        @Query("select") select: String = "*",
+        @Query("reactor_id") reactor_id: String,
+        @Query("level") level: String,
+        @Query("apikey") apikey: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3Y3J0cGlvbndla2duYnByaGNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY4MDc4NDksImV4cCI6MjA0MjM4Mzg0OX0.HCwdgujxTeGzUpvQK0czV1dNyM70Z7weqGWDz6U1WgY"
+    ):  List<UserReactorSkillPower>
+
+
+    @GET("R_skill_power_coefficient")
+    suspend fun getReactorSkillCoefficient(
+        @Query("select") select: String = "coefficient_stat_id,coefficient_stat_value",
+        @Query("skill_power_coefficient_id") skill_power_coefficient_id: String,
+        @Query("apikey") apikey: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3Y3J0cGlvbndla2duYnByaGNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY4MDc4NDksImV4cCI6MjA0MjM4Mzg0OX0.HCwdgujxTeGzUpvQK0czV1dNyM70Z7weqGWDz6U1WgY"
+    ):  List<ReactorSkillCoefficient>
 
     @GET("M_module")
     suspend fun getUserModuleName(

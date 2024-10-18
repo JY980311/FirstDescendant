@@ -9,10 +9,11 @@ import com.example.firstdescendant.data.user.descendantinfo.UserDescendantName
 import com.example.firstdescendant.data.user.external.UserExternalData
 import com.example.firstdescendant.data.user.external.UserExternalName
 import com.example.firstdescendant.data.user.module.UserModuleInfo
-import com.example.firstdescendant.data.user.module.UserModuleStatInfo
 import com.example.firstdescendant.data.user.ouid.UserOuid
+import com.example.firstdescendant.data.user.reactor.ReactorSkillCoefficient
 import com.example.firstdescendant.data.user.reactor.UserReactorData
 import com.example.firstdescendant.data.user.reactor.UserReactorInfo
+import com.example.firstdescendant.data.user.reactor.UserReactorSkillPower
 import com.example.firstdescendant.data.user.weapon.UserWeaponData
 import com.example.firstdescendant.data.user.weapon.UserWeaponInfo
 import com.example.firstdescendant.navigation.BASICINFOSCREEN_ROUTE
@@ -21,11 +22,13 @@ import com.example.firstdescendant.navigation.EXTERNALINFOSCREEN_ROUTE
 import com.example.firstdescendant.navigation.REACTORINFOSCREEN_ROUTE
 import com.example.firstdescendant.navigation.WEAPONINFOSCREEN_ROUTE
 import com.example.firstdescendant.network.RetrofitClient
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.util.concurrent.TimeUnit
 
 class TestScreenViewModel : ViewModel() {
 
@@ -67,9 +70,17 @@ class TestScreenViewModel : ViewModel() {
         MutableStateFlow(UserReactorData("", emptyList(), 0, "", 0, "", ""))
     val userReactorInfo = _user_reactorInfo.asStateFlow()
 
-    /** 사용자 반응로 이미지 정보 */
-    private val _user_reactor = MutableStateFlow(UserReactorInfo("", ""))
+    /** 사용자 반응로 세부 정보 */
+    private val _user_reactor = MutableStateFlow(UserReactorInfo(0,"", "","",""))
     val userReactorImage = _user_reactor.asStateFlow()
+
+    /** 사용자 반응로 스킬 및 보조 공격 정보 */
+    private val _user_reactor_SkillPower = MutableStateFlow(UserReactorSkillPower(0,0,0,0.0,0.0))
+    val userReactorSkillPower = _user_reactor_SkillPower.asStateFlow()
+
+    /** 반응로 추가 스텟 */
+    private val _reactor_coefficient = MutableStateFlow(emptyList<ReactorSkillCoefficient>())
+    val reactorCoefficient = _reactor_coefficient.asStateFlow()
 
     /** 사용자 외부 구성 요소 정보 */
     private val _user_externalInfo = MutableStateFlow(UserExternalData(emptyList(), "", ""))
@@ -93,6 +104,10 @@ class TestScreenViewModel : ViewModel() {
     private val _errorMessage = MutableStateFlow("")
     val errorMessage = _errorMessage.asStateFlow()
 
+    private var lastBasicTime: Long = 0L
+    private var lastWeaponTime: Long = 0L
+    private var lastReactorTime: Long = 0L
+
     fun getText(newText: String) {
         _textField.update {
             newText
@@ -107,8 +122,13 @@ class TestScreenViewModel : ViewModel() {
                 _test.update {
                     it.copy(ouid = apiResponse.ouid)
                 }
+                _errorMessage.value = ""
+
                 Log.d("ViewModel - getOuid", "ouid: ${test.value.ouid}")
             } catch (e: Exception) {
+                _test.update {
+                    it.copy(ouid = "")
+                }
                 if (e.message?.contains("400") == true) {
                     _errorMessage.value = "사용자를 찾을 수 없습니다."
                 } else if (e.message?.contains("429") == true) {
@@ -126,10 +146,24 @@ class TestScreenViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             val apiService = RetrofitClient.getDecendantApi()
+            val currentTime = System.currentTimeMillis()
             try {
-                if (test.value.ouid.isNotEmpty() && test.value.ouid != "test") {
-                    val apiResponse = apiService.getUserInfo(test.value.ouid)
+                val currentOuid = test.value.ouid
+
+                if (currentOuid.isNotEmpty() && currentOuid != "test") {
+                    if(
+                        _user_basicInfo.value.ouid == currentOuid && currentTime - lastBasicTime < TimeUnit.MINUTES.toMillis(5)
+                        ) {
+                        Log.d("getBasicInfoTime", "이미 사용된 oui: $currentOuid")
+                        _isLoading.value = false
+                        return@launch
+                    }
+
+                    val apiResponse = apiService.getUserInfo(currentOuid)
                     _user_basicInfo.value = apiResponse
+
+                    lastBasicTime = currentTime
+
                     Log.d("ViewModel - getBasicInfo", "basicInfo: ${basicInfo.value}")
                 } else {
                     Log.e(
@@ -137,6 +171,12 @@ class TestScreenViewModel : ViewModel() {
                         "getBasicInfo called with invalid ouid: ${test.value.ouid}"
                     )
                 }
+
+                val minimumTime = System.currentTimeMillis() - currentTime
+                if (minimumTime < 500) {
+                    delay(500 - minimumTime)
+                }
+
             } catch (e: Exception) {
                 Log.e("ViewModel - getBasicInfo[ERROR]", "error: ${e.message}", e)
             } finally {
@@ -181,13 +221,17 @@ class TestScreenViewModel : ViewModel() {
         viewModelScope.launch {
             val apiService = RetrofitClient.getSupabaseApiService()
             try {
-                val weaponIDs = _user_weaponInfo.value.weapon.map { it.weapon_id }
+                val weaponIDs = _user_weaponInfo.value.weapon.sortedBy { it.weapon_slot_id }.map { it.weapon_id }
                 val apiResponse = apiService.getUserWeaponNameImage(
-                    select = "main_weapon_id,weapon_name,image_url",
+                    select = "main_weapon_id,weapon_name,image_url,weapon_tier",
                     main_weapon_id = "in.(${weaponIDs.joinToString(",")})"
                 )
 
-                _user_weapon.value = apiResponse
+                val sortedApiResponse = weaponIDs.map { id ->
+                    apiResponse.find {it.main_weapon_id == id } // find 함수는 반환이 없다면 null을 반환
+                }
+
+                _user_weapon.value = sortedApiResponse.filterNotNull() // 그래서 밑에서 null 제거
 
                 Log.d("ViewModel - getWeaponInfo", "user_weapon: ${userWeapon.value}")
             } catch (e: Exception) {
@@ -200,8 +244,7 @@ class TestScreenViewModel : ViewModel() {
         viewModelScope.launch {
             val apiService = RetrofitClient.getSupabaseApiService()
             try {
-                val moduleIDs =
-                    _user_weaponInfo.value.weapon.map { weapon -> weapon.module.map { module -> module.module_id } }
+                val moduleIDs = _user_weaponInfo.value.weapon.map { weapon -> weapon.module.map { module -> module.module_id } }
                 Log.d("ViewModel - getWeaponModule", "moduleIDs: $moduleIDs")
                 val apiResponse = apiService.getUserModuleName(
                     select = "main_module_id,module_name,module_tier,image_url",
@@ -229,6 +272,8 @@ class TestScreenViewModel : ViewModel() {
                     _user_reactorInfo.value = apiResponse
 
                     getReactorInfo(_user_reactorInfo.value.reactor_id)
+                    getReactorSkillPower(_user_reactorInfo.value.reactor_id)
+                    //getReactorSkillCoefficient()
 
                     Log.d(
                         "ViewModel - getUserReactorInfo",
@@ -256,23 +301,82 @@ class TestScreenViewModel : ViewModel() {
     /** 반응로 ID에 맞춰서 이름으로 출력 */
     private fun getReactorInfo(reactorId: String) {
         viewModelScope.launch {
-            _isLoading.value = true
             val apiService = RetrofitClient.getSupabaseApiService()
             try {
                 val apiResponse = apiService.getUserReactorName(
-                    select = "reactor_name,image_url",
+                    select = "main_reactor_id,reactor_name,image_url,reactor_tier,optimized_condition_type",
                     main_reactor_id = "eq.$reactorId"
                 )
 
                 _user_reactor.value = _user_reactor.value.copy(
+                    main_reactor_id = apiResponse[0].main_reactor_id,
                     reactor_name = apiResponse[0].reactor_name,
-                    image_url = apiResponse[0].image_url
+                    image_url = apiResponse[0].image_url,
+                    reactor_tier = apiResponse[0].reactor_tier,
+                    optimized_condition_type = apiResponse[0].optimized_condition_type
                 )
+
                 Log.d("ViewModel - getUserReactorName", "user_reactor: ${userReactorInfo.value}")
             } catch (e: Exception) {
                 Log.e("ViewModel - getUserReactorName[ERROR]", "error: ${e.message}", e)
+            }
+        }
+    }
+
+    private fun getReactorSkillPower(reactorId: String) {
+        viewModelScope.launch {
+            val apiService = RetrofitClient.getSupabaseApiService()
+            try {
+                val apiResponse = apiService.getUserReactorSkillPower(
+                    select = "*",
+                    reactor_id = "eq.${reactorId}",
+                    level = "eq.${userReactorInfo.value.reactor_level}"
+                )
+
+                _user_reactor_SkillPower.value = _user_reactor_SkillPower.value.copy(
+                    id = apiResponse[0].id,
+                    reactor_id = apiResponse[0].reactor_id,
+                    level = apiResponse[0].level,
+                    skill_atk_power = apiResponse[0].skill_atk_power,
+                    sub_skill_atk_power = apiResponse[0].sub_skill_atk_power
+                )
+
+                if(_user_reactorInfo.value.reactor_enchant_level == 1) {
+                    _user_reactor_SkillPower.value = _user_reactor_SkillPower.value.copy(
+                        skill_atk_power = 11392.79
+                    )
+                } else if(_user_reactorInfo.value.reactor_enchant_level == 2) {
+                    _user_reactor_SkillPower.value = _user_reactor_SkillPower.value.copy(
+                        skill_atk_power = 11724.62
+
+                    )
+                }
+
+                getReactorSkillCoefficient()
+
+                Log.d("ViewModel - getUserReactorSkillPower", "user_reactor_skill_power: ${userReactorSkillPower.value}")
+            } catch (e: Exception) {
+                Log.e("ViewModel - getUserReactorSkillPower[ERROR]", "error: ${e.message}", e)
+            }
+        }
+    }
+
+    private fun getReactorSkillCoefficient() {
+        viewModelScope.launch {
+            val apiService = RetrofitClient.getSupabaseApiService()
+            try {
+                val apiResponse = apiService.getReactorSkillCoefficient(
+                    select = "coefficient_stat_id,coefficient_stat_value",
+                    skill_power_coefficient_id = "eq.${_user_reactor_SkillPower.value.id}"
+                )
+
+                _reactor_coefficient.value = apiResponse
+
+                Log.d("ViewModel - getReactorSkillCoefficient", "reactor_additional_stat: ${reactorCoefficient.value}")
+            } catch (e:Exception) {
+                Log.e("ViewModel - getReactorSkillCoefficient[ERROR]", "error: ${e.message}", e)
             } finally {
-                _isLoading.value = false
+                _isLoading.value = _reactor_coefficient.value.isEmpty()
                 _nextScreenRoute.value = REACTORINFOSCREEN_ROUTE
             }
         }
@@ -351,32 +455,6 @@ class TestScreenViewModel : ViewModel() {
         }
     }
 
-    /*private fun getDescendantModuleStat() {
-        viewModelScope.launch {
-            _isLoading.value = true
-            val apiService = RetrofitClient.getSupabaseApiService()
-            try {
-                val moduleIds = _user_descendantInfo.value.module.map { it.module_id }
-                val level = _user_descendantInfo.value.module.map { it.module_enchant_level }
-
-                val apiResponse = apiService.getUserModuleStat(
-                    select = "module_id,module_capacity,value",
-                    module_id = "in.(${moduleIds.joinToString(",")})",
-                    level = "in.(${level.joinToString(",")})"
-                )
-
-                _user_moduleStat.value = apiResponse
-
-            } catch (
-                e: Exception
-            ) {
-                Log.e("ViewModel - getModuleStat[ERROR]", "error: ${e.message}", e)
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }*/
-
     fun getUserExternalInfo() {
         viewModelScope.launch {
             _isLoading.value = true
@@ -409,13 +487,18 @@ class TestScreenViewModel : ViewModel() {
         viewModelScope.launch {
             val apiService = RetrofitClient.getSupabaseApiService()
             try {
-                val externalIDs =
-                    _user_externalInfo.value.external_component.map { it.external_component_id }
+                val sortedExternalIDs = _user_externalInfo.value.external_component.sortedBy { it.external_component_slot_id }.map { it.external_component_id}
+
                 val apiResponse = apiService.getUserExternalName(
-                    select = "external_component_name,image_url",
-                    main_external_component_id = "in.(${externalIDs.joinToString(",")})"
+                    select = "main_external_component_id,external_component_name,image_url,external_component_tier",
+                    main_external_component_id = "in.(${sortedExternalIDs.joinToString(",")})"
                 )
-                _user_external.value = apiResponse
+
+                val sortedApiResponse = sortedExternalIDs.map { id ->
+                    apiResponse.find { it.main_external_component_id == id }
+                }
+
+                _user_external.value = sortedApiResponse.filterNotNull()
 
                 Log.d("ViewModel - getExternalInfo", "user_external: ${userExternal.value}")
 

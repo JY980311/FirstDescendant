@@ -12,10 +12,11 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun NameBox(
+    modifier: Modifier = Modifier,
     text : String
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .border(1.dp, Color.White, RoundedCornerShape(8.dp))
     ){
         Text(

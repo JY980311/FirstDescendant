@@ -11,6 +11,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,20 +29,40 @@ import androidx.compose.ui.unit.sp
 import com.example.firstdescendant.R
 import com.example.firstdescendant.ui.theme.DescendantTypography
 import com.example.firstdescendant.ui.theme.mainButtonColor
+import kotlinx.coroutines.delay
 
 @Composable
 fun CustomBoxButton(
     modifier: Modifier = Modifier,
     text: String,
-    onClick: () -> Unit
+    enabled: Boolean = true,
+    onClick: () -> Unit,
 ) {
+
+    val backgroundColor = if(enabled) mainButtonColor else Color.Red
+
+    var isClicked by remember { mutableStateOf(true) }
+    val clickDelay = 300L
+
+    LaunchedEffect(Unit) {
+        if (!isClicked) {
+            delay(clickDelay)
+            isClicked = true
+        }
+    }
+
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .width(160.dp)
             .height(100.dp)
-            .background(color = mainButtonColor)
-            .clickable { onClick() }
+            .background(color = backgroundColor)
+            .clickable(enabled = isClicked && enabled) {
+                if (isClicked) {
+                    isClicked = false
+                    onClick()
+                }
+            }
     ) {
         Text(
             modifier = Modifier

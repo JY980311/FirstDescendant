@@ -11,8 +11,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.firstdescendant.component.CustomImageBox
+import com.example.firstdescendant.component.NameBox
 import com.example.firstdescendant.component.WeaponEnchantLevelBox
 import com.example.firstdescendant.data.user.module.UserModuleInfo
 import com.example.firstdescendant.data.user.weapon.UserWeaponModule
@@ -53,11 +57,14 @@ fun UserWeaponInfoScreen(
     val userWeaponInfo by viewModel.userWeaponInfo.collectAsStateWithLifecycle()
     val userWeapon by viewModel.userWeapon.collectAsStateWithLifecycle()
     val userModulesInfo by viewModel.userModule.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
+            .statusBarsPadding()
+            .navigationBarsPadding()
     ) {
         Text(
             text = buildAnnotatedString {
@@ -73,13 +80,15 @@ fun UserWeaponInfoScreen(
 
         if (userWeaponInfo.weapon.isEmpty()) {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = "무기 정보가 없습니다.")
             }
         } else {
-            for (i in 0 until userWeaponInfo.weapon.size) {
+            for (i in 0 until userWeaponInfo.weapon.size) { //indices 유효한 범위 반환
                 Column(
                     modifier = Modifier.padding(top = 60.dp, bottom = 10.dp)
                 ) {
@@ -98,7 +107,7 @@ fun UserWeaponInfoScreen(
                             )
                             Text(
                                 modifier = Modifier.align(Alignment.CenterEnd),
-                                text = "Lv.${userWeaponInfo.weapon[i].weapon_level.toString()}",
+                                text = "Lv.${userWeaponInfo.weapon[i].weapon_level}",
                                 style = DescendantTypography.weaponLevelText
                             )
                         }
@@ -107,7 +116,8 @@ fun UserWeaponInfoScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 4.dp),
-                        imageUrl = userWeapon[i].image_url
+                        imageUrl = userWeapon[i].image_url,
+                        tier = userWeapon[i].weapon_tier
                     )
                     WeaponEnchantLevelBox(
                         userWeaponInfo.weapon[i].perk_ability_enchant_level
@@ -115,6 +125,10 @@ fun UserWeaponInfoScreen(
                 }
 
                 Text(text = "고유 능력 강화 레벨 : ${userWeaponInfo.weapon[i].perk_ability_enchant_level ?: "레벨 없음"}")
+
+                NameBox(
+                    text = "무기 옵션"
+                )
 
                 if (userWeaponInfo.weapon[i].weapon_additional_stat.isNullOrEmpty()) {
                     Text(text = "추가 스탯 없음")
@@ -134,10 +148,13 @@ fun UserWeaponInfoScreen(
                 }
 
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp), //모듈 자체에 padding 8이 들어감
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "[무기 모듈]")
+                    NameBox(
+                        text = "모듈 정보"
+                    )
 
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -169,7 +186,7 @@ fun WeaponModuleBox(
     weaponModule: List<UserWeaponModule>,
     weaponModuleInfo: List<UserModuleInfo>
 ) {
-    //전설
+    //궁극
     val specialModule = arrayOf(
         0.1f to specialModColor,
         0.4f to moduleCenterColor,
