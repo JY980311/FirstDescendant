@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,7 +38,7 @@ import coil.compose.AsyncImage
 import com.example.firstdescendant.component.CustomImageBox
 import com.example.firstdescendant.component.NameBox
 import com.example.firstdescendant.component.WeaponEnchantLevelBox
-import com.example.firstdescendant.data.user.module.UserModuleInfo
+import com.example.firstdescendant.data.user.module.UserWeaponModuleInfo
 import com.example.firstdescendant.data.user.weapon.UserWeaponModule
 import com.example.firstdescendant.data.user.weapon.UserWeapon
 import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
@@ -56,7 +55,7 @@ fun UserWeaponInfoScreen(
 ) {
     val userWeaponInfo by viewModel.userWeaponInfo.collectAsStateWithLifecycle()
     val userWeapon by viewModel.userWeapon.collectAsStateWithLifecycle()
-    val userModulesInfo by viewModel.userModule.collectAsStateWithLifecycle()
+    val userWeaponModulesInfo by viewModel.userWeaponModule.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -170,7 +169,7 @@ fun UserWeaponInfoScreen(
                     item {
                         WeaponModuleLayout(
                             userWeapon = userWeaponInfo.weapon[i],
-                            weaponModuleInfo = userModulesInfo
+                            weaponModuleInfo = userWeaponModulesInfo
                         )
                     }
                 }
@@ -184,7 +183,7 @@ fun UserWeaponInfoScreen(
 @Composable
 fun WeaponModuleBox(
     weaponModule: List<UserWeaponModule>,
-    weaponModuleInfo: List<UserModuleInfo>
+    weaponModuleInfo: List<UserWeaponModuleInfo>
 ) {
     //궁극
     val specialModule = arrayOf(
@@ -273,7 +272,7 @@ fun WeaponModuleBox(
 @Composable
 fun WeaponModuleLayout(
     userWeapon: UserWeapon,
-    weaponModuleInfo: List<UserModuleInfo>
+    weaponModuleInfo: List<UserWeaponModuleInfo>
 ) {
 
     val mainModules = userWeapon.module

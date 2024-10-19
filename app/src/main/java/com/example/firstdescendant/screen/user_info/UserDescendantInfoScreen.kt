@@ -36,8 +36,8 @@ import coil.compose.AsyncImage
 import com.example.firstdescendant.component.CustomImageBox
 import com.example.firstdescendant.component.NameBox
 import com.example.firstdescendant.data.user.descendantinfo.UserModule
-import com.example.firstdescendant.data.user.module.UserModuleInfo
-import com.example.firstdescendant.data.user.module.UserModuleStatInfo
+import com.example.firstdescendant.data.user.module.UserDescendantModuleInfo
+import com.example.firstdescendant.data.user.module.UserWeaponModuleInfo
 import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
 import com.example.firstdescendant.ui.theme.DescendantTypography
 import com.example.firstdescendant.ui.theme.mainBackgroundColor
@@ -54,7 +54,7 @@ fun UserDescendantInfoScreen(
 ) {
     val userDescendantInfo by viewModel.userDescendantInfo.collectAsStateWithLifecycle()
     val userDescendant by viewModel.userDescendant.collectAsStateWithLifecycle()
-    val userModulesInfo by viewModel.userModule.collectAsStateWithLifecycle()
+    val userDescendantModule by viewModel.userDescendantModule.collectAsStateWithLifecycle()
     val userModules = userDescendantInfo.module
 
     Column(
@@ -120,7 +120,7 @@ fun UserDescendantInfoScreen(
             item {
                 ModuleLayout(
                     userModules = userModules,
-                    userModulesInfo = userModulesInfo
+                    userModulesInfo = userDescendantModule
                 )
             }
         }
@@ -131,7 +131,7 @@ fun UserDescendantInfoScreen(
 @Composable
 fun ModuleBox(
     userModules: List<UserModule>,
-    userModulesInfo: List<UserModuleInfo>,
+    userModulesInfo: List<UserDescendantModuleInfo>,
 ) {
     val transcendentModule = arrayOf(
         0.1f to transcendentColor,
@@ -228,7 +228,7 @@ fun ModuleBox(
 @Composable
 fun ModuleLayout(
     userModules: List<UserModule>,
-    userModulesInfo: List<UserModuleInfo>
+    userModulesInfo: List<UserDescendantModuleInfo>
 ) {
     val skillModule = userModules.filter { module -> module.module_slot_id == "Skill 1" }
     val subModule = userModules.filter { module -> module.module_slot_id == "Sub 1" }

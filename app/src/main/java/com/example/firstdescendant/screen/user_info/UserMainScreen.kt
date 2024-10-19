@@ -1,5 +1,6 @@
 package com.example.firstdescendant.screen.user_info
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.firstdescendant.component.CustomBoxButton
 import com.example.firstdescendant.component.CustomTextField
+import com.example.firstdescendant.navigation.WEAPONINFOSCREEN_ROUTE
 import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
 import com.example.firstdescendant.ui.theme.DescendantTypography
 import kotlinx.coroutines.delay
@@ -58,8 +60,8 @@ fun UserMainScreen(
 
     var disableScreen by remember { mutableStateOf(true) }
 
-    LaunchedEffect(isLoading.value) {
-        if (!isLoading.value && nextScreenRoute.value != null) {
+    LaunchedEffect(nextScreenRoute.value) {
+        if (nextScreenRoute.value != null) {
             disableScreen = false
             navHostController.navigate(nextScreenRoute.value!!)
             viewModel.resetNextScreenRoute()
@@ -69,6 +71,17 @@ fun UserMainScreen(
         }
     }
 
+    /*LaunchedEffect(nextScreenRoute.value) {
+        nextScreenRoute.value?.let {
+            navHostController.navigate(it)
+            viewModel.resetNextScreenRoute()
+
+            // 화면 전환 후 잠시 대기 후 로딩 상태 해제
+            delay(500)
+            // 필요에 따라 추가 로직을 처리
+        }
+    }*/
+
 
 
     Column(
@@ -77,16 +90,7 @@ fun UserMainScreen(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
             .statusBarsPadding()
-            .navigationBarsPadding()
-            .pointerInput(disableScreen) {
-                if (disableScreen && isLoading.value){
-                    awaitPointerEventScope {
-                        while (disableScreen) {
-                            awaitPointerEvent()
-                        }
-                    }
-                }
-            },
+            .navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
@@ -111,10 +115,10 @@ fun UserMainScreen(
         CustomBoxButton(
             modifier = Modifier.height(50.dp),
             onClick = {
+                Log.d("UI", "사용자 조회 버튼 클릭됨")
                 viewModel.getOuid()
             },
-            text = "사용자 조회",
-            enabled = !isLoading.value
+            text = "사용자 조회"
         )
 
         if (ouid.value.ouid.isNotEmpty()) {
@@ -130,7 +134,7 @@ fun UserMainScreen(
                         viewModel.getUserBasicInfo()
                     },
                     text = "사용자 기본 정보 조회",
-                    enabled =!isLoading.value && disableScreen
+                    enabled =!isLoading.value
                 )
 
                 CustomBoxButton(
@@ -139,7 +143,7 @@ fun UserMainScreen(
                         viewModel.getUserDescendantInfo()
                     },
                     text = "장착 계승자 정보 조회",
-                    enabled = !isLoading.value && disableScreen
+                    enabled = !isLoading.value
                 )
             }
 
@@ -152,7 +156,7 @@ fun UserMainScreen(
                         viewModel.getUserWeaponInfo()
                     },
                     text = "장착 무기 정보 조회",
-                    enabled = !isLoading.value && disableScreen
+                    enabled = !isLoading.value
                 )
 
                 CustomBoxButton(
@@ -160,7 +164,7 @@ fun UserMainScreen(
                         viewModel.getUserReactorInfo()
                     },
                     text = "장착 반응로 정보 조회",
-                    enabled = !isLoading.value && disableScreen
+                    enabled = !isLoading.value
                 )
             }
 
@@ -169,7 +173,7 @@ fun UserMainScreen(
                     viewModel.getUserExternalInfo()
                 },
                 text = "장착 외장부품 정보 조회",
-                enabled = !isLoading.value && disableScreen
+                enabled = !isLoading.value
             )
         } else if (
             errorMessage.value.isNotEmpty() && !isLoading.value

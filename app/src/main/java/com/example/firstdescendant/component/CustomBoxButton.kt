@@ -44,7 +44,7 @@ fun CustomBoxButton(
     var isClicked by remember { mutableStateOf(true) }
     val clickDelay = 300L
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(isClicked) {
         if (!isClicked) {
             delay(clickDelay)
             isClicked = true
