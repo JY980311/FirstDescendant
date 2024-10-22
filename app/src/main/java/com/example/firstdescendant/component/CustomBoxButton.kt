@@ -37,6 +37,7 @@ fun CustomBoxButton(
     text: String,
     enabled: Boolean = true,
     onClick: () -> Unit,
+    fontSize: Int? = null
 ) {
 
     val backgroundColor = if(enabled) mainButtonColor else Color.Red
@@ -69,6 +70,7 @@ fun CustomBoxButton(
                 .align(Alignment.Center),
             text = text,
             style = DescendantTypography.boxButtonText,
+            fontSize = fontSize?.sp ?: 15.sp
         )
     }
 }

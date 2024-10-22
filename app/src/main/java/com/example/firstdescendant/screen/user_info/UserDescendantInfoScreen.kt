@@ -67,10 +67,8 @@ fun UserDescendantInfoScreen(
     ) {
         Text(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)){
-                    append("DESCENDANT")
-                }
-                withStyle(style = SpanStyle(fontSize = 18.sp)) {
+                append("DESCENDANT")
+                withStyle(SpanStyle(fontStyle = DescendantTypography.subHeadLineText.fontStyle)){
                     append(" INFO")
                 }
             },

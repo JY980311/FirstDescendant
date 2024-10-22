@@ -58,10 +58,8 @@ fun UserReactorInfoScreen(
     ) {
         Text(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append("REACTOR")
-                }
-                withStyle(style = SpanStyle(fontSize = 18.sp)) {
+                append("REACTOR")
+                withStyle(SpanStyle(fontStyle = DescendantTypography.subHeadLineText.fontStyle)){
                     append(" INFO")
                 }
             },

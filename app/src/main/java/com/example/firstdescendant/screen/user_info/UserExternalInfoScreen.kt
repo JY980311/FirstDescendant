@@ -50,10 +50,8 @@ fun UserExternalInfoScreen(
     ) {
         Text(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)){
-                    append("EXTERNAL COMPONENT")
-                }
-                withStyle(style = SpanStyle(fontSize = 18.sp)) {
+                append("EXTERNAL COMPONENT")
+                withStyle(SpanStyle(fontStyle = DescendantTypography.subHeadLineText.fontStyle)){
                     append(" INFO")
                 }
             },

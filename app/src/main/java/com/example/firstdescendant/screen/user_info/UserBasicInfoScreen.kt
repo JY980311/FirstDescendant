@@ -36,10 +36,8 @@ fun UserBasicInfoScreen(
     ) {
         Text(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)){
-                    append("BASIC")
-                }
-                withStyle(style = SpanStyle(fontSize = 18.sp)) {
+                append("BASIC")
+                withStyle(SpanStyle(fontStyle = DescendantTypography.subHeadLineText.fontStyle)) {
                     append(" INFO")
                 }
             },

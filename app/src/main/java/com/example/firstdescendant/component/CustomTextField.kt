@@ -47,9 +47,9 @@ fun CustomTextField(
 
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(4.dp))
+            .clip(RoundedCornerShape(8.dp))
             .fillMaxWidth()
-            .height(40.dp)
+            .height(53.dp)
             .border(1.dp, if(focused) focusedBorderColor else unFocusedBorderColor, RoundedCornerShape(4.dp))
             .background(textFieldInnerColor)
             .padding(6.dp),

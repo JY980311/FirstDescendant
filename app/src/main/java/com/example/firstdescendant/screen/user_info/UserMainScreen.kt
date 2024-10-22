@@ -48,6 +48,8 @@ fun UserMainScreen(
 
     val ouid = viewModel.test.collectAsStateWithLifecycle()
 
+    val userBasic by viewModel.basicInfo.collectAsStateWithLifecycle()
+
     val textField = viewModel.textField.collectAsStateWithLifecycle()
 
     val errorMessage = viewModel.errorMessage.collectAsStateWithLifecycle()
@@ -91,14 +93,12 @@ fun UserMainScreen(
     ) {
         Text(
             text = buildAnnotatedString {
-                withStyle(SpanStyle(fontSize = 18.sp))
+                withStyle(SpanStyle(fontStyle = DescendantTypography.subHeadLineText.fontStyle))
                 {
                     append(" THE ")
                 }
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append("FIRST")
-                    append("\nDESCENDANT")
-                }
+                append("FIRST\nDESCENDANT")
+
             },
             style = DescendantTypography.headLineText
         )
@@ -114,10 +114,23 @@ fun UserMainScreen(
                 viewModel.getOuid()
             },
             text = "사용자 조회",
-            enabled = !isLoading.value
+            enabled = !isLoading.value,
+            fontSize = 20
         )
 
         if (ouid.value.ouid.isNotEmpty()) {
+            Text(text = "닉네임 : ${userBasic.user_name}")
+
+            Text(text = "게임에 사용하는 언어 : ${userBasic.game_language}")
+
+            Text(text = "마스터리 레벨 : ${userBasic.mastery_rank_level}")
+
+            Text(text = "마스터리 경험치 : ${userBasic.mastery_rank_exp}")
+
+            Text(text = "사용하는 플랫폼 : ${userBasic.platform_type}")
+
+            Text(text = "사용하는 OS 언어 : ${userBasic.os_language}")
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
