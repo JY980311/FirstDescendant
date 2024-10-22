@@ -13,19 +13,28 @@ import com.example.firstdescendant.R
 object DescendantTypography {
     val headLineText = TextStyle(
         fontFamily = FontFamily(Font(R.font.dohyeon)),
-        fontWeight = FontWeight.Bold,
-        fontSize = 25.sp,
+        fontWeight = FontWeight.Medium,
+        fontSize = 50.sp,
         lineHeight = 18.sp * 1.5,
-        letterSpacing = 25.sp * (-0.006),
+        letterSpacing = 50.sp * (-0.006),
+        color = Color.White
+    )
+
+    // HeadLine하고 7 차이 나게 설정함.
+    val subHeadLineText = TextStyle(
+        fontFamily = FontFamily(Font(R.font.dohyeon)),
+        fontWeight = FontWeight.Medium,
+        fontSize = 43.sp,
+        lineHeight = 18.sp * 1.5,
+        letterSpacing = 43.sp * (-0.006),
         color = Color.White
     )
 
     val boxButtonText = TextStyle(
         fontFamily = FontFamily(Font(R.font.dohyeon)),
         fontWeight = FontWeight.Normal,
-        fontSize = 13.sp,
-        lineHeight = 13.sp * 1.5,
-        letterSpacing = 13.sp * (-0.006),
+        lineHeight = 15.sp * 1.5,
+        letterSpacing = 15.sp * (-0.006),
         color = Color.Black
     )
 
@@ -72,6 +81,14 @@ object DescendantTypography {
         fontSize = 14.sp,
         lineHeight = 14.sp * 1.5,
         letterSpacing = 14.sp * (-0.006),
+        color = Color.White
+    )
+
+    val nameBoxText = TextStyle(
+        //fontFamily = FontFamily(Font(R.font.dohyeon)),
+        fontWeight = FontWeight.Normal,
+        lineHeight = 15.sp * 1.5,
+        letterSpacing = 15.sp * (-0.006),
         color = Color.White
     )
 }

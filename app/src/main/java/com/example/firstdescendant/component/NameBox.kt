@@ -9,11 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.firstdescendant.ui.theme.DescendantTypography
 
 @Composable
 fun NameBox(
     modifier: Modifier = Modifier,
-    text : String
+    text : String,
+    fontSize : Int? = null
 ) {
     Box(
         modifier = modifier
@@ -21,7 +24,7 @@ fun NameBox(
     ){
         Text(
             modifier = Modifier.padding(4.dp),
-            text = text
+            text = text,
         )
     }
 }

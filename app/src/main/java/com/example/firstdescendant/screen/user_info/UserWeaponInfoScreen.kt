@@ -67,10 +67,8 @@ fun UserWeaponInfoScreen(
     ) {
         Text(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)){
-                    append("WEAPON")
-                }
-                withStyle(style = SpanStyle(fontSize = 18.sp)) {
+                append("WEAPON")
+                withStyle(SpanStyle(fontStyle = DescendantTypography.subHeadLineText.fontStyle)){
                     append(" INFO")
                 }
             },
