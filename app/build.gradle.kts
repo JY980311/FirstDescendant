@@ -1,14 +1,17 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
 
+
 android {
-    namespace = "com.example.firstdescendant"
+    namespace = "com.example.thefirstdescendantlink"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.firstdescendant"
+        applicationId = "com.example.thefirstdescendantlink"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -18,6 +21,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "NEXON_API_KEY", gradleLocalProperties(rootDir).getProperty("NEXON_API_KEY"))
+        buildConfigField("String", "SUPABASE_API_KEY", gradleLocalProperties(rootDir).getProperty("SUPABASE_API_KEY"))
+        buildConfigField("String", "NEXON_URL", gradleLocalProperties(rootDir).getProperty("NEXON_URL"))
+        buildConfigField("String", "SUPABASE_URL", gradleLocalProperties(rootDir).getProperty("SUPABASE_URL"))
     }
 
     buildTypes {
@@ -38,6 +46,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"

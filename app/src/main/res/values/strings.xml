@@ -1,3 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">FirstDescendant</string>
+    <string name="user_lookup">사용자 조회</string>
+    <string name="nickname">닉네임</string>
+    <string name="game_language">게임에 사용하는 언어</string>
+    <string name="mastery_level">마스터리 레벨</string>
+    <string name="platform_used">사용하는 플랫폼</string>
+    <string name="os_language">사용하는 OS 언어</string>
+    <string name="equipped_descendant_info">장착 계승자 정보 조회</string>
+    <string name="equipped_weapon_info">장착 무기 정보 조회</string>
+    <string name="equipped_reactor_info">장착 반응로 정보 조회</string>
+    <string name="equipped_exterior_part_info">장착 외장부품 정보 조회</string>
+    <string name="user_name">사용자 이름</string>
+    <string name="descendant_name">계승자 이름</string>
+    <string name="descendant_level">계승자 레벨</string>
+    <string name="module_info">모듈 정보</string>
+    <string name="current_capacity">현재 용량</string>
+    <string name="max_capacity">최대 용량</string>
+    <string name="empty">빈칸</string>
+    <string name="module_image">모듈 이미지</string>
+    <string name="exterior_part_base_option">외장부품 기본 옵션</string>
+    <string name="exterior_part_random_option">외장부품 랜덤 옵션</string>
+    <string name="cannot_retrieve">가져올 수 없습니다.</string>
+    <string name="skill_power">스킬 위력</string>
+    <string name="sub_attack_power">보조 공격 위력</string>
+    <string name="optimization_condition">최적화 조건</string>
+    <string name="skill_power_increase_rate">스킬 위력 증가율</string>
+    <string name="skill_power_increase_value">스킬 위력 증가율 수치</string>
+    <string name="reactor_option">반응로 옵션</string>
+    <string name="no_weapon_info">무기 정보가 없습니다.</string>
+    <string name="unique_ability_upgrade_level">고유 능력 강화 레벨</string>
+    <string name="no_level">레벨 없음</string>
+    <string name="weapon_option">무기 옵션</string>
+    <string name="no_additional_stat">추가 스탯 없음</string>
+    <string name="button_image">버튼 이미지</string>
+    <string name="placeholder_text">abcd#1234</string>
+    <string name="data_image">데이터 이미지</string>
 </resources>
