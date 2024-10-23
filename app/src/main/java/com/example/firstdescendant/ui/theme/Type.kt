@@ -31,7 +31,7 @@ object DescendantTypography {
     )
 
     val boxButtonText = TextStyle(
-        fontFamily = FontFamily(Font(R.font.dohyeon)),
+        fontFamily = FontFamily(Font(R.font.nanum_square_eb)),
         fontWeight = FontWeight.Normal,
         lineHeight = 15.sp * 1.5,
         letterSpacing = 15.sp * (-0.006),

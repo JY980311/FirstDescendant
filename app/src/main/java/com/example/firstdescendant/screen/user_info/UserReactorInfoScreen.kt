@@ -1,8 +1,6 @@
 package com.example.firstdescendant.screen.user_info
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,40 +11,33 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
-import com.example.firstdescendant.component.CustomImageBox
+import com.example.firstdescendant.component.ImageBox
 import com.example.firstdescendant.component.NameBox
 import com.example.firstdescendant.component.ReactorEnchantLevelBox
 import com.example.firstdescendant.data.user.reactor.UserReactorAdditionalStat
 import com.example.firstdescendant.data.user.reactor.UserReactorData
-import com.example.firstdescendant.data.user.reactor.UserReactorInfo
-import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
+import com.example.firstdescendant.screen.viewmodel.UserScreenViewModel
 import com.example.firstdescendant.ui.theme.DescendantContentText
 import com.example.firstdescendant.ui.theme.DescendantTypography
-import com.example.firstdescendant.ui.theme.mainBackgroundColor
 
 @Composable
 fun UserReactorInfoScreen(
-    viewModel: TestScreenViewModel,
+    viewModel: UserScreenViewModel,
 ) {
     val userReactorInfo by viewModel.userReactorInfo.collectAsStateWithLifecycle()
     val userReactor by viewModel.userReactorImage.collectAsStateWithLifecycle()
@@ -87,7 +78,7 @@ fun UserReactorInfoScreen(
                     text = userReactor.reactor_name,
                     style = DescendantTypography.weaponMainText
                 )
-                CustomImageBox(
+                ImageBox(
                     modifier = Modifier.height(200.dp),
                     imageUrl = userReactor.image_url,
                     tier = userReactor.reactor_tier
@@ -271,7 +262,7 @@ fun UserReactorInfoScreenPreview() {
                     text = "리액터 이름",
                     //style = DescendantTypography.weaponMainText
                 )
-                CustomImageBox(
+                ImageBox(
                     modifier = Modifier.height(200.dp),
                     imageUrl = "https://open.api.nexon.com/static/tfd/img/133a00069f113afbdcd05b7bfc4c2c"
                 )

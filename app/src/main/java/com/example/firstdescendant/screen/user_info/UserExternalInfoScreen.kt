@@ -26,18 +26,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
-import com.example.firstdescendant.component.CustomImageBox
+import com.example.firstdescendant.component.ImageBox
 import com.example.firstdescendant.component.NameBox
-import com.example.firstdescendant.data.user.external.UserExternalData
-import com.example.firstdescendant.data.user.external.UserExternalName
-import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
+import com.example.firstdescendant.screen.viewmodel.UserScreenViewModel
 import com.example.firstdescendant.ui.theme.DescendantContentText
 import com.example.firstdescendant.ui.theme.DescendantTypography
 
 @Composable
 fun UserExternalInfoScreen(
-    viewModel : TestScreenViewModel,
+    viewModel : UserScreenViewModel,
 ) {
     val userExternalInfo by viewModel.userExternalInfo.collectAsStateWithLifecycle()
     val userExternal by viewModel.userExternal.collectAsStateWithLifecycle()
@@ -79,7 +76,7 @@ fun UserExternalInfoScreen(
                     text = userExternal[i].external_component_name,
                     style = DescendantTypography.weaponMainText
                 )
-                CustomImageBox(
+                ImageBox(
                     modifier = Modifier
                         .size(250.dp, 170.dp)
                         .padding(top = 4.dp),

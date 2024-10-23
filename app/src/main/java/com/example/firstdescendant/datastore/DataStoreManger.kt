@@ -21,8 +21,6 @@ val Context.dataStore by preferencesDataStore(name = "app_preferences")
 
 class DataStoreManger(private val context: Context) {
 
-    //private val gson = Gson()
-
     suspend fun saveOuid(ouid: String) {
         context.dataStore.edit { preferences ->
             preferences[DataStoreKeys.LAST_OUID] = ouid

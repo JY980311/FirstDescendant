@@ -21,7 +21,6 @@ import com.example.firstdescendant.data.user.reactor.UserReactorSkillPower
 import com.example.firstdescendant.data.user.weapon.UserWeaponData
 import com.example.firstdescendant.data.user.weapon.UserWeaponInfo
 import com.example.firstdescendant.datastore.DataStoreManger
-import com.example.firstdescendant.navigation.BASICINFOSCREEN_ROUTE
 import com.example.firstdescendant.navigation.DESCENDANTINFOSCREEN_ROUTE
 import com.example.firstdescendant.navigation.EXTERNALINFOSCREEN_ROUTE
 import com.example.firstdescendant.navigation.REACTORINFOSCREEN_ROUTE
@@ -36,7 +35,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.util.concurrent.TimeUnit
 
-class TestScreenViewModel(private val context: Context) : ViewModel() {
+class UserScreenViewModel(context: Context) : ViewModel() {
 
     private val dataStoreManager = DataStoreManger(context)
 
@@ -602,37 +601,38 @@ class TestScreenViewModel(private val context: Context) : ViewModel() {
     }
 
     private suspend fun getExternalValue() {
-            val apiService = RetrofitClient.getSupabaseApiService()
-            try {
-                val sortedExternalIDs =
-                    _user_externalInfo.value.external_component.sortedBy { it.external_component_slot_id }
-                        .map { it.external_component_id }
+        val apiService = RetrofitClient.getSupabaseApiService()
+        try {
+            val sortedExternalIDs =
+                _user_externalInfo.value.external_component.sortedBy { it.external_component_slot_id }
+                    .map { it.external_component_id }
 
-                val apiResponse = apiService.getUserExterStatValue(
-                    select = "external_component_id,stat_id,stat_value",
-                    level = "in.(${
-                        _user_externalInfo.value.external_component.map { it.external_component_level }
-                            .joinToString(",")
-                    })",
-                    external_component_id = "in.(${
-                        sortedExternalIDs.joinToString(",")
-                    })"
-                )
-                val sortedApiResponse = sortedExternalIDs.map { id ->
-                    apiResponse.find { it.external_component_id == id }
-                }
-
-                _user_external_value.value = sortedApiResponse.filterNotNull()
-                Log.d("getExternalValue", "user_external_value: ${userExternalValue.value}")
-            } catch (e: Exception) {
-                Log.e("getExternalValue[ERROR]", "error: ${e.message}", e)
+            val apiResponse = apiService.getUserExterStatValue(
+                select = "external_component_id,stat_id,stat_value",
+                level = "in.(${
+                    _user_externalInfo.value.external_component.map { it.external_component_level }
+                        .joinToString(",")
+                })",
+                external_component_id = "in.(${
+                    sortedExternalIDs.joinToString(",")
+                })"
+            )
+            val sortedApiResponse = sortedExternalIDs.map { id ->
+                apiResponse.find { it.external_component_id == id }
             }
+
+            _user_external_value.value = sortedApiResponse.filterNotNull()
+            Log.d("getExternalValue", "user_external_value: ${userExternalValue.value}")
+        } catch (e: Exception) {
+            Log.e("getExternalValue[ERROR]", "error: ${e.message}", e)
+        }
     }
 
     private suspend fun getExternalStat() {
         val apiService = RetrofitClient.getSupabaseApiService()
         try {
-            val statIds = _user_external_value.value.flatMap { listOf(it.stat_id, it.stat_id) } // 중복 추가
+            val statIds =
+                _user_external_value.value.flatMap { listOf(it.stat_id, it.stat_id) } // 중복 추가
             val statIdString = statIds.joinToString(",")
             val apiResponse = apiService.getStatName(
                 select = "stat_name,stat_id",

@@ -10,11 +10,11 @@ import com.example.firstdescendant.screen.user_info.UserExternalInfoScreen
 import com.example.firstdescendant.screen.user_info.UserMainScreen
 import com.example.firstdescendant.screen.user_info.UserReactorInfoScreen
 import com.example.firstdescendant.screen.user_info.UserWeaponInfoScreen
-import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
+import com.example.firstdescendant.screen.viewmodel.UserScreenViewModel
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
-    val viewModel = TestScreenViewModel(context = LocalContext.current)
+    val viewModel = UserScreenViewModel(context = LocalContext.current)
 
     NavHost(
         navController = navController,

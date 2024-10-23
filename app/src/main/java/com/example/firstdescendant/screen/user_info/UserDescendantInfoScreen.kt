@@ -30,21 +30,18 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.firstdescendant.R
-import com.example.firstdescendant.component.CustomImageBox
+import com.example.firstdescendant.component.ImageBox
 import com.example.firstdescendant.component.NameBox
 import com.example.firstdescendant.data.user.descendantinfo.UserModule
 import com.example.firstdescendant.data.user.module.UserDescendantModuleInfo
-import com.example.firstdescendant.data.user.module.UserWeaponModuleInfo
-import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
+import com.example.firstdescendant.screen.viewmodel.UserScreenViewModel
 import com.example.firstdescendant.ui.theme.DescendantContentText
 import com.example.firstdescendant.ui.theme.DescendantTypography
-import com.example.firstdescendant.ui.theme.mainBackgroundColor
 import com.example.firstdescendant.ui.theme.moduleBorderColor
 import com.example.firstdescendant.ui.theme.moduleCenterColor
 import com.example.firstdescendant.ui.theme.rareColor
@@ -54,7 +51,7 @@ import com.example.firstdescendant.ui.theme.transcendentColor
 
 @Composable
 fun UserDescendantInfoScreen(
-    viewModel: TestScreenViewModel,
+    viewModel: UserScreenViewModel,
 ) {
     val userDescendantInfo by viewModel.userDescendantInfo.collectAsStateWithLifecycle()
     val userDescendant by viewModel.userDescendant.collectAsStateWithLifecycle()
@@ -85,7 +82,7 @@ fun UserDescendantInfoScreen(
                 .padding(top = 30.dp, bottom = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(15.dp)
         ){
-            CustomImageBox(
+            ImageBox(
                 modifier = Modifier
                     .height(280.dp),
                 imageUrl = userDescendant.descendant_image_url

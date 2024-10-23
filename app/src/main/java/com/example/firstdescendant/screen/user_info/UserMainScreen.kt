@@ -26,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -36,10 +35,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.example.firstdescendant.component.CustomBoxButton
-import com.example.firstdescendant.component.CustomTextField
-import com.example.firstdescendant.navigation.WEAPONINFOSCREEN_ROUTE
-import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
+import com.example.firstdescendant.R
+import com.example.firstdescendant.component.UserSearchButton
+import com.example.firstdescendant.component.FTextField
+import com.example.firstdescendant.component.FButton
+import com.example.firstdescendant.screen.viewmodel.UserScreenViewModel
 import com.example.firstdescendant.ui.theme.DescendantContentText
 import com.example.firstdescendant.ui.theme.DescendantTypography
 import kotlinx.coroutines.delay
@@ -47,7 +47,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun UserMainScreen(
     navHostController: NavHostController,
-    viewModel: TestScreenViewModel
+    viewModel: UserScreenViewModel
 ) {
 
     val ouid = viewModel.test.collectAsStateWithLifecycle()
@@ -77,19 +77,6 @@ fun UserMainScreen(
         }
     }
 
-    /*LaunchedEffect(nextScreenRoute.value) {
-        nextScreenRoute.value?.let {
-            navHostController.navigate(it)
-            viewModel.resetNextScreenRoute()
-
-            // 화면 전환 후 잠시 대기 후 로딩 상태 해제
-            delay(500)
-            // 필요에 따라 추가 로직을 처리
-        }
-    }*/
-
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -113,13 +100,13 @@ fun UserMainScreen(
             style = DescendantTypography.headLineText
         )
 
-        CustomTextField(
+        FTextField(
             modifier = Modifier,
             value = textField.value,
             onValueChange = { viewModel.getText(it) }
         )
 
-        CustomBoxButton(
+        UserSearchButton(
             modifier = Modifier
                 .height(50.dp)
                 .padding(bottom = 10.dp),
@@ -131,8 +118,6 @@ fun UserMainScreen(
             },
             text = "사용자 조회"
         )
-
-        Text(text = "뿡뿡뿡뿡뿡뿡", fontSize = 80.sp)
 
         if (ouid.value.ouid.isNotEmpty()) {
             "닉네임 : ${userBasic.user_name}"
@@ -197,22 +182,24 @@ fun UserMainScreen(
                     .padding(top = 40.dp),
                 horizontalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally)
             ) {
-                CustomBoxButton(
+                FButton(
                     modifier = Modifier.weight(1f),
                     onClick = {
                         viewModel.getUserDescendantInfo()
                     },
                     text = "장착 계승자 정보 조회",
-                    enabled = !isLoading.value
+                    enabled = !isLoading.value,
+                    icon = R.drawable.ic_descendant
                 )
 
-                CustomBoxButton(
+                FButton(
                     modifier = Modifier.weight(1f),
                     onClick = {
                         viewModel.getUserWeaponInfo()
                     },
                     text = "장착 무기 정보 조회",
-                    enabled = !isLoading.value
+                    enabled = !isLoading.value,
+                    icon = R.drawable.ic_weapon
                 )
             }
 
@@ -220,22 +207,24 @@ fun UserMainScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement =Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally)
             ) {
-                CustomBoxButton(
+                FButton(
                     modifier = Modifier.weight(1f),
                     onClick = {
                         viewModel.getUserReactorInfo()
                     },
                     text = "장착 반응로 정보 조회",
-                    enabled = !isLoading.value
+                    enabled = !isLoading.value,
+                    icon = R.drawable.ic_reactor
                 )
 
-                CustomBoxButton(
+                FButton(
                     modifier = Modifier.weight(1f),
                     onClick = {
                         viewModel.getUserExternalInfo()
                     },
                     text = "장착 외장부품 정보 조회",
-                    enabled = !isLoading.value
+                    enabled = !isLoading.value,
+                    icon = R.drawable.ic_external
                 )
             }
         } else if (

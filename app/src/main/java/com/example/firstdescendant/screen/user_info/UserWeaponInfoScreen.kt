@@ -26,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -41,13 +40,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.firstdescendant.R
-import com.example.firstdescendant.component.CustomImageBox
+import com.example.firstdescendant.component.ImageBox
 import com.example.firstdescendant.component.NameBox
 import com.example.firstdescendant.component.WeaponEnchantLevelBox
 import com.example.firstdescendant.data.user.module.UserWeaponModuleInfo
 import com.example.firstdescendant.data.user.weapon.UserWeaponModule
 import com.example.firstdescendant.data.user.weapon.UserWeapon
-import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
+import com.example.firstdescendant.screen.viewmodel.UserScreenViewModel
 import com.example.firstdescendant.ui.theme.DescendantContentText
 import com.example.firstdescendant.ui.theme.DescendantTypography
 import com.example.firstdescendant.ui.theme.moduleBorderColor
@@ -59,7 +58,7 @@ import com.example.firstdescendant.ui.theme.weaponGuideLineColor
 
 @Composable
 fun UserWeaponInfoScreen(
-    viewModel: TestScreenViewModel,
+    viewModel: UserScreenViewModel,
 ) {
     val userWeaponInfo by viewModel.userWeaponInfo.collectAsStateWithLifecycle()
     val userWeapon by viewModel.userWeapon.collectAsStateWithLifecycle()
@@ -122,7 +121,7 @@ fun UserWeaponInfoScreen(
                             )
                         }
                     }
-                    CustomImageBox(
+                    ImageBox(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 4.dp),

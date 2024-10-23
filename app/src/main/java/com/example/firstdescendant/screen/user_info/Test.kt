@@ -39,22 +39,6 @@ fun Test() {
         Text(
             buildAnnotatedString {
                 withStyle(SpanStyle(
-                    fontFamily = FontFamily(Font(R.font.nanum_square_eb))
-                )){
-                    append(text = "닉네임 : ")
-                }
-                withStyle(SpanStyle(
-                    fontFamily = FontFamily(Font(R.font.nanum_square_ac_r))
-                )){
-                    append(text = "개미똥꾸멍")
-                }
-            },
-            fontSize = 30.sp
-        )
-
-        Text(
-            buildAnnotatedString {
-                withStyle(SpanStyle(
                     fontFamily = FontFamily(Font(R.font.dohyeon))
                 )){
                     append(text = "닉네임 : ")

@@ -22,7 +22,7 @@ import com.example.firstdescendant.ui.theme.specialModColor
 import com.example.firstdescendant.ui.theme.standardColor
 
 @Composable
-fun CustomImageBox(
+fun ImageBox(
     modifier: Modifier = Modifier,
     imageUrl: String,
     tier: String? = null
@@ -92,7 +92,7 @@ fun DescendantImageBoxPreview() {
             .fillMaxSize()
             .background(mainBackgroundColor)
     ) {
-        CustomImageBox(
+        ImageBox(
             imageUrl = "https://open.api.nexon.com/static/tfd/img/133a00069f113afbdcd05b7bfc4c2cfa",
             tier = "희귀"
 
