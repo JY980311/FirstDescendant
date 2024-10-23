@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,12 +30,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.example.firstdescendant.R
 import com.example.firstdescendant.component.CustomImageBox
 import com.example.firstdescendant.component.NameBox
 import com.example.firstdescendant.component.WeaponEnchantLevelBox
@@ -42,12 +48,14 @@ import com.example.firstdescendant.data.user.module.UserWeaponModuleInfo
 import com.example.firstdescendant.data.user.weapon.UserWeaponModule
 import com.example.firstdescendant.data.user.weapon.UserWeapon
 import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
+import com.example.firstdescendant.ui.theme.DescendantContentText
 import com.example.firstdescendant.ui.theme.DescendantTypography
 import com.example.firstdescendant.ui.theme.moduleBorderColor
 import com.example.firstdescendant.ui.theme.moduleCenterColor
 import com.example.firstdescendant.ui.theme.rareColor
 import com.example.firstdescendant.ui.theme.specialModColor
 import com.example.firstdescendant.ui.theme.standardColor
+import com.example.firstdescendant.ui.theme.weaponGuideLineColor
 
 @Composable
 fun UserWeaponInfoScreen(
@@ -67,8 +75,10 @@ fun UserWeaponInfoScreen(
     ) {
         Text(
             text = buildAnnotatedString {
-                append("WEAPON")
-                withStyle(SpanStyle(fontStyle = DescendantTypography.subHeadLineText.fontStyle)){
+                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("WEAPON")
+                }
+                withStyle(SpanStyle(fontSize = 33.sp)) {
                     append(" INFO")
                 }
             },
@@ -82,12 +92,15 @@ fun UserWeaponInfoScreen(
                     .statusBarsPadding(),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "무기 정보가 없습니다.")
+                Text(
+                    text = "무기 정보가 없습니다.",
+                    style = DescendantTypography.mainTitleText
+                )
             }
         } else {
             for (i in 0 until userWeaponInfo.weapon.size) { //indices 유효한 범위 반환
                 Column(
-                    modifier = Modifier.padding(top = 60.dp, bottom = 10.dp)
+                    modifier = Modifier.padding(top = 30.dp)
                 ) {
                     Row(
                         modifier = Modifier
@@ -96,7 +109,7 @@ fun UserWeaponInfoScreen(
                     ) {
                         Box(
                             modifier = Modifier.fillMaxWidth()
-                        ){
+                        ) {
                             Text(
                                 modifier = Modifier.align(Alignment.Center),
                                 text = userWeapon[i].weapon_name,
@@ -116,48 +129,97 @@ fun UserWeaponInfoScreen(
                         imageUrl = userWeapon[i].image_url,
                         tier = userWeapon[i].weapon_tier
                     )
-                    WeaponEnchantLevelBox(
-                        userWeaponInfo.weapon[i].perk_ability_enchant_level
-                    )
-                }
 
-                Text(text = "고유 능력 강화 레벨 : ${userWeaponInfo.weapon[i].perk_ability_enchant_level ?: "레벨 없음"}")
-
-                NameBox(
-                    text = "무기 옵션"
-                )
-
-                if (userWeaponInfo.weapon[i].weapon_additional_stat.isNullOrEmpty()) {
-                    Text(text = "추가 스탯 없음")
-                } else {
-                    userWeaponInfo.weapon[i].weapon_additional_stat?.take(4)?.forEach { stat ->
-                        Text(
-                            modifier = Modifier.padding(vertical = 1.dp),
-                            text = "${stat.additional_stat_name} = ${stat.additional_stat_value}"
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        WeaponEnchantLevelBox(
+                            userWeaponInfo.weapon[i].perk_ability_enchant_level
                         )
-                        //가로선 추가
-                        Spacer(modifier = Modifier
-                            .height(1.dp)
-                            .fillMaxWidth()
-                            .background(Color.White)
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(DescendantContentText.mainTitleText) {
+                                    append("고유 능력 강화 레벨 : ")
+                                }
+                                withStyle(DescendantContentText.mainContentText) {
+                                    append("${userWeaponInfo.weapon[i].perk_ability_enchant_level ?: "레벨 없음"}")
+                                }
+                            }
                         )
                     }
                 }
 
+                Spacer(modifier = Modifier.height(20.dp))
+
+                NameBox(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    text = "무기 옵션"
+                )
+                if (userWeaponInfo.weapon[i].weapon_additional_stat.isNullOrEmpty()) {
+                    Text(
+                        text = "추가 스탯 없음",
+                        style = DescendantTypography.mainTitleText
+                    )
+                } else {
+                    userWeaponInfo.weapon[i].weapon_additional_stat?.take(4)?.forEach { stat ->
+                        Text(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            text = buildAnnotatedString {
+                                withStyle(DescendantContentText.mainTitleText) {
+                                    append("${stat.additional_stat_name} = ")
+                                }
+                                withStyle(DescendantContentText.mainContentText) {
+                                    append(stat.additional_stat_value)
+                                }
+                            }
+                        )
+                        //가로선 추가
+                        Spacer(
+                            modifier = Modifier
+                                .height(1.dp)
+                                .fillMaxWidth()
+                                .background(weaponGuideLineColor)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp), //모듈 자체에 padding 8이 들어감
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp), //모듈 자체에 padding 8이 들어감
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     NameBox(
                         text = "모듈 정보"
                     )
-
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(text = "현재 용량 : ${userWeaponInfo.weapon[i].module_capacity}")
-                        Text(text = "최대 용량 : ${userWeaponInfo.weapon[i].module_max_capacity}")
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(DescendantContentText.mainTitleText) {
+                                    append("현재 용량 : ")
+                                }
+                                withStyle(DescendantContentText.mainContentText) {
+                                    append("${userWeaponInfo.weapon[i].module_capacity}")
+                                }
+                            }
+                        )
+
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(DescendantContentText.mainTitleText) {
+                                    append("최대 용량 : ")
+                                }
+                                withStyle(DescendantContentText.mainContentText) {
+                                    append("${userWeaponInfo.weapon[i].module_max_capacity}")
+                                }
+                            }
+                        )
                     }
                 }
 
@@ -220,7 +282,8 @@ fun WeaponModuleBox(
             Text(
                 modifier = Modifier.align(Alignment.Center),
                 text = "Empty(빈칸)",
-                fontSize = 12.sp
+                fontSize = 12.sp,
+                fontFamily = FontFamily(Font(R.font.nanum_square_r))
             )
         }
     } else {
@@ -236,6 +299,7 @@ fun WeaponModuleBox(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
+
                 Box(
                     modifier = Modifier
                         .padding(bottom = 8.dp, top = 8.dp, end = 8.dp)
@@ -253,11 +317,16 @@ fun WeaponModuleBox(
                         contentScale = ContentScale.Crop,
                     )
                 }
-                Row {
+                Row(
+                    modifier = Modifier.wrapContentSize(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
                     Text(
-                        text = (matchingModule?.module_name
-                            ?: "Unknown") + "(${module.module_enchant_level})",
-                        fontSize = 12.sp
+                        modifier = Modifier.padding(end = 8.dp),
+                        text = "${matchingModule?.module_name ?: "Unknown"}(${module.module_enchant_level})",
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(Font(R.font.nanum_square_r)),
+                        textAlign = TextAlign.Center
                     )
                 }
             }
@@ -322,5 +391,33 @@ fun WeaponModuleLayout(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun UserWeaponInfoScreenPreview() {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        WeaponModuleBox(
+            weaponModule =
+            listOf(
+                UserWeaponModule(
+                    module_id = 1,
+                    module_slot_id = "1",
+                    module_enchant_level = 1
+                )
+            ),
+            weaponModuleInfo =
+            listOf(
+                UserWeaponModuleInfo(
+                    main_module_id = 1,
+                    module_name = "모듈 이름",
+                    module_tier = "희귀",
+                    image_url = "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg"
+                )
+            )
+        )
     }
 }

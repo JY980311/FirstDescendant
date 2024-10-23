@@ -40,4 +40,7 @@ val textFieldInnerColor = Color(0xFF636363)
 /** 텍스트 필드 placeholder 색상 */
 val textFieldPlaceholderColor = Color(0xFF8F8F8F)
 
+// 무기 안내선 색상
+val weaponGuideLineColor = Color(0xFF727272)
+
 

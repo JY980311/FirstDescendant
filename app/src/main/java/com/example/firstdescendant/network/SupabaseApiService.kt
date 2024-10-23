@@ -2,6 +2,8 @@ package com.example.firstdescendant.network
 
 import com.example.firstdescendant.data.user.descendantinfo.UserDescendantName
 import com.example.firstdescendant.data.user.external.UserExternalName
+import com.example.firstdescendant.data.user.external.UserExternalStatName
+import com.example.firstdescendant.data.user.external.UserExternalStatValue
 import com.example.firstdescendant.data.user.module.UserDescendantModuleInfo
 import com.example.firstdescendant.data.user.module.UserWeaponModuleInfo
 import com.example.firstdescendant.data.user.module.UserModuleStatInfo
@@ -77,4 +79,19 @@ interface SupabaseApiService {
         @Query("main_external_component_id") main_external_component_id: String,
         @Query("apikey") apikey: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3Y3J0cGlvbndla2duYnByaGNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY4MDc4NDksImV4cCI6MjA0MjM4Mzg0OX0.HCwdgujxTeGzUpvQK0czV1dNyM70Z7weqGWDz6U1WgY"
     ): List<UserExternalName>
+
+    @GET("E_base_stat")
+    suspend fun getUserExterStatValue(
+        @Query("select") select: String = "stat_id,stat_value",
+        @Query("level") level: String,
+        @Query("external_component_id") external_component_id: String,
+        @Query("apikey") apikey: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3Y3J0cGlvbndla2duYnByaGNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY4MDc4NDksImV4cCI6MjA0MjM4Mzg0OX0.HCwdgujxTeGzUpvQK0czV1dNyM70Z7weqGWDz6U1WgY"
+    ): List<UserExternalStatValue>
+
+    @GET("S_stat")
+    suspend fun getStatName(
+        @Query("select") select: String = "stat_name",
+        @Query("stat_id") stat_id: String,
+        @Query("apikey") apikey: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3Y3J0cGlvbndla2duYnByaGNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY4MDc4NDksImV4cCI6MjA0MjM4Mzg0OX0.HCwdgujxTeGzUpvQK0czV1dNyM70Z7weqGWDz6U1WgY"
+    ): List<UserExternalStatName>
 }

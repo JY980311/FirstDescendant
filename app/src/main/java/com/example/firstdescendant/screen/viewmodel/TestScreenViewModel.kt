@@ -1,5 +1,6 @@
 package com.example.firstdescendant.screen.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +9,8 @@ import com.example.firstdescendant.data.user.descendantinfo.UserDescendantData
 import com.example.firstdescendant.data.user.descendantinfo.UserDescendantName
 import com.example.firstdescendant.data.user.external.UserExternalData
 import com.example.firstdescendant.data.user.external.UserExternalName
+import com.example.firstdescendant.data.user.external.UserExternalStatName
+import com.example.firstdescendant.data.user.external.UserExternalStatValue
 import com.example.firstdescendant.data.user.module.UserDescendantModuleInfo
 import com.example.firstdescendant.data.user.module.UserWeaponModuleInfo
 import com.example.firstdescendant.data.user.ouid.UserOuid
@@ -17,6 +20,7 @@ import com.example.firstdescendant.data.user.reactor.UserReactorInfo
 import com.example.firstdescendant.data.user.reactor.UserReactorSkillPower
 import com.example.firstdescendant.data.user.weapon.UserWeaponData
 import com.example.firstdescendant.data.user.weapon.UserWeaponInfo
+import com.example.firstdescendant.datastore.DataStoreManger
 import com.example.firstdescendant.navigation.BASICINFOSCREEN_ROUTE
 import com.example.firstdescendant.navigation.DESCENDANTINFOSCREEN_ROUTE
 import com.example.firstdescendant.navigation.EXTERNALINFOSCREEN_ROUTE
@@ -26,12 +30,15 @@ import com.example.firstdescendant.network.RetrofitClient
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.util.concurrent.TimeUnit
 
-class TestScreenViewModel : ViewModel() {
+class TestScreenViewModel(private val context: Context) : ViewModel() {
+
+    private val dataStoreManager = DataStoreManger(context)
 
     /** OUID */
     private val _test = MutableStateFlow(UserOuid(""))
@@ -51,15 +58,13 @@ class TestScreenViewModel : ViewModel() {
     val userDescendant = _user_descendant.asStateFlow()
 
     /** 계승자 모듈 정보 */
-    private val _user_DescendantModule = MutableStateFlow<List<UserDescendantModuleInfo>>(emptyList())
+    private val _user_DescendantModule =
+        MutableStateFlow<List<UserDescendantModuleInfo>>(emptyList())
     val userDescendantModule = _user_DescendantModule.asStateFlow()
 
     /** 무기 모듈 정보 */
     private val _user_WeaponModule = MutableStateFlow<List<UserWeaponModuleInfo>>(emptyList())
     val userWeaponModule = _user_WeaponModule.asStateFlow()
-    /*private val _user_moduleStat = MutableStateFlow<List<UserModuleStatInfo>>(emptyList())
-    val userModuleStat = _user_moduleStat.asStateFlow()
-    */
 
     /** 사용자 무기 정보 */
     private val _user_weaponInfo = MutableStateFlow(UserWeaponData("", "", emptyList()))
@@ -75,11 +80,12 @@ class TestScreenViewModel : ViewModel() {
     val userReactorInfo = _user_reactorInfo.asStateFlow()
 
     /** 사용자 반응로 세부 정보 */
-    private val _user_reactor = MutableStateFlow(UserReactorInfo(0,"", "","",""))
+    private val _user_reactor = MutableStateFlow(UserReactorInfo(0, "", "", "", ""))
     val userReactorImage = _user_reactor.asStateFlow()
 
     /** 사용자 반응로 스킬 및 보조 공격 정보 */
-    private val _user_reactor_SkillPower = MutableStateFlow(UserReactorSkillPower(0,0,0,0.0,0.0))
+    private val _user_reactor_SkillPower =
+        MutableStateFlow(UserReactorSkillPower(0, 0, 0, 0.0, 0.0))
     val userReactorSkillPower = _user_reactor_SkillPower.asStateFlow()
 
     /** 반응로 추가 스텟 */
@@ -94,6 +100,12 @@ class TestScreenViewModel : ViewModel() {
     private val _user_external = MutableStateFlow<List<UserExternalName>>(emptyList())
     val userExternal = _user_external.asStateFlow()
 
+    private val _user_external_value = MutableStateFlow(emptyList<UserExternalStatValue>())
+    val userExternalValue = _user_external_value.asStateFlow()
+
+    private val _user_external_stat = MutableStateFlow(emptyList<UserExternalStatName>())
+    val userExternalStat = _user_external_stat.asStateFlow()
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
@@ -107,12 +119,6 @@ class TestScreenViewModel : ViewModel() {
     /** 에러 메시지 */
     private val _errorMessage = MutableStateFlow("")
     val errorMessage = _errorMessage.asStateFlow()
-
-    private var lastBasicTime: Long = 0L
-    private var lastWeaponTime: Long = 0L
-    private var lastReactorTime: Long = 0L
-    private var lastDescendantTime: Long = 0L
-    private var lastExternalTime: Long = 0L
 
     fun getText(newText: String) {
         _textField.update {
@@ -129,7 +135,10 @@ class TestScreenViewModel : ViewModel() {
                 _test.update {
                     it.copy(ouid = apiResponse.ouid)
                 }
-                //_errorMessage.value = ""
+
+                dataStoreManager.saveOuid(test.value.ouid)
+
+                getUserBasicInfo()
 
                 Log.d("ViewModel - getOuid", "ouid: ${test.value.ouid}")
             } catch (e: Exception) {
@@ -148,99 +157,93 @@ class TestScreenViewModel : ViewModel() {
                     e.message?.contains("500") == true -> {
                         _errorMessage.value = "내부 서버에서 오류가 발생하였습니다."
                     }
+
                     else -> {
                         _errorMessage.value = "알 수 없는 오류가 발생하였습니다."
                     }
                 }
-            } finally {
-                _isLoading.value = false
             }
         }
     }
 
     fun getUserBasicInfo() {
         viewModelScope.launch {
-            _isLoading.value = true
             val apiService = RetrofitClient.getDecendantApi()
-            try {
-                val currentTime = System.currentTimeMillis()
-                val currentOuid = test.value.ouid
+            val currentTime = System.currentTimeMillis()
+            val currentOuid = test.value.ouid
 
-                if (currentOuid.isNotEmpty() && currentOuid != "test") {
-                    if(
-                        _user_basicInfo.value.ouid == currentOuid && currentTime - lastBasicTime < TimeUnit.MINUTES.toMillis(5)
-                        ) {
-                        Log.d("getBasicInfoTime", "이미 사용된 oui: $currentOuid")
-                        _isLoading.value = false
-                        _nextScreenRoute.value = BASICINFOSCREEN_ROUTE
-                        return@launch
-                    }
+            Log.d("getBasicInfo", "ouid: $currentOuid")
 
-                    val apiResponse = apiService.getUserInfo(currentOuid)
-                    _user_basicInfo.value = apiResponse
+            if (currentOuid.isNotEmpty() && currentOuid != "test") {
+                val lastBasicTime = dataStoreManager.lastBasicTime.first()
+                Log.d("getBasicInfoTime", "lastBasicTime: $lastBasicTime")
 
-                    lastBasicTime = currentTime
-
-                    Log.d("ViewModel - getBasicInfo", "basicInfo: ${basicInfo.value}")
-                } else {
-                    Log.e(
-                        "ViewModel - getBasicInfo",
-                        "getBasicInfo called with invalid ouid: ${test.value.ouid}"
+                if (_user_basicInfo.value.ouid == currentOuid && currentTime - lastBasicTime < TimeUnit.MINUTES.toMillis(
+                        5
                     )
+                ) {
+                    Log.d("getBasicInfoTime", "캐시된 데이터 사용: $currentOuid")
+                    _isLoading.value = false
+                    return@launch
                 }
+            }
+
+            try {
+                val apiResponse = apiService.getUserInfo(currentOuid)
+                _user_basicInfo.value = apiResponse
+                dataStoreManager.saveLastBasicTime(currentTime) // 호출 시간 저장
+
+                Log.d("ViewModel - getBasicInfo", "기본 정보: ${basicInfo.value}")
 
                 val minimumTime = System.currentTimeMillis() - currentTime
                 if (minimumTime < 500) {
                     delay(500 - minimumTime)
                 }
-
             } catch (e: Exception) {
                 Log.e("ViewModel - getBasicInfo[ERROR]", "error: ${e.message}", e)
             } finally {
                 _isLoading.value = false
-                _nextScreenRoute.value = BASICINFOSCREEN_ROUTE
             }
         }
     }
 
-
     fun getUserWeaponInfo() {
         viewModelScope.launch {
-            val apiService = RetrofitClient.getDecendantApi()
             _isLoading.value = true
-            try {
-                val currentTime = System.currentTimeMillis()
-                val currentOuid = test.value.ouid
+            val apiService = RetrofitClient.getDecendantApi()
+            val currentTime = System.currentTimeMillis()
+            val currentOuid = test.value.ouid
 
-                if (currentOuid.isNotEmpty() && currentOuid != "test") {
-                    if(
-                        _user_weaponInfo.value.ouid == currentOuid && currentTime - lastWeaponTime < TimeUnit.MINUTES.toMillis(5)
-                    ){
-                        Log.d("getWeaponInfoTime", "이미 사용된 oui: $currentOuid")
-                        _isLoading.value = false
-                        _nextScreenRoute.value = WEAPONINFOSCREEN_ROUTE
+            if (currentOuid.isNotEmpty() && currentOuid != "test") {
+                val lastWeaponTime = dataStoreManager.lastWeaponTime.first()
 
-                        return@launch
-                    }
-
-                    val apiResponse = apiService.getUserWeaponInfo("ko", currentOuid)
-                    _user_weaponInfo.value = apiResponse
-
-                    lastWeaponTime = currentTime
-
-                    Log.d(
-                        "ViewModel - getUserWeaponInfo",
-                        "userWeaponInfo: ${userWeaponInfo.value}"
+                if (_user_weaponInfo.value.ouid == currentOuid && currentTime - lastWeaponTime < TimeUnit.MINUTES.toMillis(
+                        5
                     )
+                ) {
+                    Log.d("getWeaponInfoTime", "이미 사용된 oui: $currentOuid")
+                    _isLoading.value = false
+                    _nextScreenRoute.value = WEAPONINFOSCREEN_ROUTE
+                    return@launch
+                }
+            }
 
-                    getWeaponInfo()
-                    getWeaponModule()
+            try {
+                val apiResponse = apiService.getUserWeaponInfo("ko", currentOuid)
 
-                    val minimumTime = System.currentTimeMillis() - currentTime
-                    if (minimumTime < 500) {
-                        delay(500 - minimumTime)
-                    }
+                _user_weaponInfo.value = apiResponse
+                Log.d(
+                    "ViewModel - getUserWeaponInfo",
+                    "userWeaponInfo: ${userWeaponInfo.value}"
+                )
+                getWeaponInfo()
+                getWeaponModule()
+                dataStoreManager.saveLastWeaponTime(currentTime)
 
+                val minimumTime = System.currentTimeMillis() - currentTime
+
+                if (minimumTime < 500) {
+                    delay(500 - minimumTime)
                 } else {
                     Log.e(
                         "ViewModel - getUserWeaponInfo",
@@ -259,14 +262,16 @@ class TestScreenViewModel : ViewModel() {
         viewModelScope.launch {
             val apiService = RetrofitClient.getSupabaseApiService()
             try {
-                val weaponIDs = _user_weaponInfo.value.weapon.sortedBy { it.weapon_slot_id }.map { it.weapon_id }
+                val weaponIDs =
+                    _user_weaponInfo.value.weapon.sortedBy { it.weapon_slot_id }
+                        .map { it.weapon_id }
                 val apiResponse = apiService.getUserWeaponNameImage(
                     select = "main_weapon_id,weapon_name,image_url,weapon_tier",
                     main_weapon_id = "in.(${weaponIDs.joinToString(",")})"
                 )
 
                 val sortedApiResponse = weaponIDs.map { id ->
-                    apiResponse.find {it.main_weapon_id == id } // find 함수는 반환이 없다면 null을 반환
+                    apiResponse.find { it.main_weapon_id == id } // find 함수는 반환이 없다면 null을 반환
                 }
 
                 _user_weapon.value = sortedApiResponse.filterNotNull() // 그래서 밑에서 null 제거
@@ -282,7 +287,8 @@ class TestScreenViewModel : ViewModel() {
         viewModelScope.launch {
             val apiService = RetrofitClient.getSupabaseApiService()
             try {
-                val moduleIDs = _user_weaponInfo.value.weapon.map { weapon -> weapon.module.map { module -> module.module_id } }
+                val moduleIDs =
+                    _user_weaponInfo.value.weapon.map { weapon -> weapon.module.map { module -> module.module_id } }
                 Log.d("ViewModel - getWeaponModule", "moduleIDs: $moduleIDs")
                 val apiResponse = apiService.getUserModuleWeapon(
                     select = "main_module_id,module_name,module_tier,image_url",
@@ -304,40 +310,38 @@ class TestScreenViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             val apiService = RetrofitClient.getDecendantApi()
+            val currentTime = System.currentTimeMillis()
+            val currentOuid = test.value.ouid
+            if (currentOuid.isNotEmpty() && currentOuid != "test") {
+                val lastReactorTime = dataStoreManager.lastReactorTime.first()
+                if (_user_reactorInfo.value.ouid == currentOuid && currentTime - lastReactorTime < TimeUnit.MINUTES.toMillis(
+                        5
+                    )
+                ) {
+                    Log.d("getReactorInfoTime", "이미 사용된 oui: $currentOuid")
+                    _isLoading.value = false
+                    _nextScreenRoute.value = REACTORINFOSCREEN_ROUTE
+                    return@launch
+                }
+            }
+
             try {
-                val currentTime = System.currentTimeMillis()
-                val currentOuid = test.value.ouid
+                val apiResponse = apiService.getUserReactorInfo("ko", currentOuid)
+                _user_reactorInfo.value = apiResponse
 
-                if (currentOuid.isNotEmpty() && currentOuid != "test") {
-                    if(
-                        _user_reactorInfo.value.ouid == currentOuid && currentTime - lastReactorTime < TimeUnit.MINUTES.toMillis(5)
-                    ){
-                        Log.d("getReactorInfoTime", "이미 사용된 oui: $currentOuid")
-                        _isLoading.value = false
-                        _nextScreenRoute.value = REACTORINFOSCREEN_ROUTE
-                        return@launch
-                    }
+                getReactorInfo(_user_reactorInfo.value.reactor_id)
+                getReactorSkillPower(_user_reactorInfo.value.reactor_id)
+                dataStoreManager.saveLastReactorTime(currentTime)
 
-                    val apiResponse = apiService.getUserReactorInfo("ko", currentOuid)
-                    _user_reactorInfo.value = apiResponse
-
-                    getReactorInfo(_user_reactorInfo.value.reactor_id)
-                    getReactorSkillPower(_user_reactorInfo.value.reactor_id)
-
-                    lastReactorTime = currentTime
-
-                    val minimumTime = System.currentTimeMillis() - currentTime
-                    if (minimumTime < 500) {
-                        delay(500 - minimumTime)
-                    }
-
+                val minimumTime = System.currentTimeMillis() - currentTime
+                if (minimumTime < 500) {
+                    delay(500 - minimumTime)
                 } else {
                     Log.d(
                         "ViewModel - getUserReactorInfo",
                         "getUserReactorInfo called with invalid ouid: $currentOuid"
                     )
                 }
-
             } catch (e: HttpException) {
                 Log.e("ViewModel - getUserReactorInfo[ERROR]", "error: ${e.message}", e)
                 val errorBody = e.response()?.errorBody()?.string()
@@ -389,11 +393,11 @@ class TestScreenViewModel : ViewModel() {
                     sub_skill_atk_power = apiResponse[0].sub_skill_atk_power
                 )
 
-                if(_user_reactorInfo.value.reactor_enchant_level == 1) {
+                if (_user_reactorInfo.value.reactor_enchant_level == 1) {
                     _user_reactor_SkillPower.value = _user_reactor_SkillPower.value.copy(
                         skill_atk_power = 11392.79
                     )
-                } else if(_user_reactorInfo.value.reactor_enchant_level == 2) {
+                } else if (_user_reactorInfo.value.reactor_enchant_level == 2) {
                     _user_reactor_SkillPower.value = _user_reactor_SkillPower.value.copy(
                         skill_atk_power = 11724.62
 
@@ -402,7 +406,10 @@ class TestScreenViewModel : ViewModel() {
 
                 getReactorSkillCoefficient()
 
-                Log.d("ViewModel - getUserReactorSkillPower", "user_reactor_skill_power: ${userReactorSkillPower.value}")
+                Log.d(
+                    "ViewModel - getUserReactorSkillPower",
+                    "user_reactor_skill_power: ${userReactorSkillPower.value}"
+                )
             } catch (e: Exception) {
                 Log.e("ViewModel - getUserReactorSkillPower[ERROR]", "error: ${e.message}", e)
             }
@@ -420,8 +427,11 @@ class TestScreenViewModel : ViewModel() {
 
                 _reactor_coefficient.value = apiResponse
 
-                Log.d("ViewModel - getReactorSkillCoefficient", "reactor_additional_stat: ${reactorCoefficient.value}")
-            } catch (e:Exception) {
+                Log.d(
+                    "ViewModel - getReactorSkillCoefficient",
+                    "reactor_additional_stat: ${reactorCoefficient.value}"
+                )
+            } catch (e: Exception) {
                 Log.e("ViewModel - getReactorSkillCoefficient[ERROR]", "error: ${e.message}", e)
             } finally {
                 _isLoading.value = _reactor_coefficient.value.isEmpty()
@@ -435,37 +445,36 @@ class TestScreenViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             val apiService = RetrofitClient.getDecendantApi()
-            try {
-                val currentTime = System.currentTimeMillis()
-                val currentOuid = test.value.ouid
+            val currentTime = System.currentTimeMillis()
+            val currentOuid = test.value.ouid
 
-                if (currentOuid.isNotEmpty() && currentOuid != "test") {
-                    if(
-                        _user_descendantInfo.value.ouid == currentOuid && currentTime - lastDescendantTime < TimeUnit.MINUTES.toMillis(5)
-                    ){
-                        Log.d("getDescendantInfoTime", "이미 사용된 oui: $currentOuid")
-                        _isLoading.value = false
-                        _nextScreenRoute.value = DESCENDANTINFOSCREEN_ROUTE
-                        return@launch
-                    }
+            if (currentOuid.isNotEmpty() && currentOuid != "test") {
 
-                    val apiResponse = apiService.getUserDescendantInfo(currentOuid)
-                    _user_descendantInfo.value = apiResponse
+                val lastDescendantTime = dataStoreManager.lastDescendantTime.first()
 
-                    getDescendantInfo(_user_descendantInfo.value.descendant_id)
-                    getDescendantModule()
-
-                    lastDescendantTime = currentTime
-
-                    val minimumTime = System.currentTimeMillis() - currentTime
-                    if (minimumTime < 500) {
-                        delay(500 - minimumTime)
-                    }
-
-                    Log.d(
-                        "ViewModel - getDescendantInfo",
-                        "descendantInfo: ${userDescendantInfo.value}"
+                if (_user_descendantInfo.value.ouid == currentOuid && currentTime - lastDescendantTime < TimeUnit.MINUTES.toMillis(
+                        5
                     )
+                ) {
+                    Log.d("getDescendantInfoTime", "이미 사용된 oui: $currentOuid")
+                    _isLoading.value = false
+                    _nextScreenRoute.value = DESCENDANTINFOSCREEN_ROUTE
+                    return@launch
+                }
+            }
+
+            try {
+
+                val apiResponse = apiService.getUserDescendantInfo(currentOuid)
+                _user_descendantInfo.value = apiResponse
+
+                getDescendantInfo(_user_descendantInfo.value.descendant_id)
+                getDescendantModule()
+                dataStoreManager.saveLastDescendantTime(currentTime)
+
+                val minimumTime = System.currentTimeMillis() - currentTime
+                if (minimumTime < 500) {
+                    delay(500 - minimumTime)
                 } else {
                     Log.e(
                         "ViewModel - getDescendantInfo",
@@ -525,37 +534,34 @@ class TestScreenViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             val apiService = RetrofitClient.getDecendantApi()
-            try {
-                val currentTime = System.currentTimeMillis()
-                val currentOuid = test.value.ouid
+            val currentTime = System.currentTimeMillis()
+            val currentOuid = test.value.ouid
 
-                if (currentOuid.isNotEmpty() && currentOuid != "test") {
-                    if(
-                        _user_externalInfo.value.ouid == currentOuid && currentTime - lastExternalTime < TimeUnit.MINUTES.toMillis(5)
-                    ){
-                        Log.d("getExternalInfoTime", "이미 사용된 oui: $currentOuid")
-                        _isLoading.value = false
-                        _nextScreenRoute.value = EXTERNALINFOSCREEN_ROUTE
-                        return@launch
-                    }
-
-                    val apiResponse = apiService.getUserExternalInfo("ko", currentOuid)
-                    _user_externalInfo.value = apiResponse
-
-                    getExternalInfo()
-
-                    lastExternalTime = currentTime
-
-                    val minimumTime = System.currentTimeMillis() - currentTime
-                    if (minimumTime < 500) {
-                        delay(500 - minimumTime)
-                    }
-
-                    Log.d(
-                        "ViewModel - getUserExternalInfo",
-                        "user_externalInfo: ${userExternalInfo.value}"
+            if (currentOuid.isNotEmpty() && currentOuid != "test") {
+                val lastExternalTime = dataStoreManager.lastExternalTime.first()
+                if (_user_externalInfo.value.ouid == currentOuid && currentTime - lastExternalTime < TimeUnit.MINUTES.toMillis(
+                        5
                     )
+                ) {
+                    Log.d("getExternalInfoTime", "이미 사용된 oui: $currentOuid")
+                    _isLoading.value = false
+                    _nextScreenRoute.value = EXTERNALINFOSCREEN_ROUTE
+                    return@launch
+                }
+            }
+            try {
+                val apiResponse = apiService.getUserExternalInfo("ko", currentOuid)
+                _user_externalInfo.value = apiResponse
 
+                getExternalInfo()
+                getExternalValue()
+                delay(100)
+                getExternalStat()
+                dataStoreManager.saveLastExternalTime(currentTime)
+
+                val minimumTime = System.currentTimeMillis() - currentTime
+                if (minimumTime < 500) {
+                    delay(500 - minimumTime)
                 } else {
                     Log.e(
                         "ViewModel - getUserExternalInfo",
@@ -572,7 +578,9 @@ class TestScreenViewModel : ViewModel() {
         viewModelScope.launch {
             val apiService = RetrofitClient.getSupabaseApiService()
             try {
-                val sortedExternalIDs = _user_externalInfo.value.external_component.sortedBy { it.external_component_slot_id }.map { it.external_component_id}
+                val sortedExternalIDs =
+                    _user_externalInfo.value.external_component.sortedBy { it.external_component_slot_id }
+                        .map { it.external_component_id }
 
                 val apiResponse = apiService.getUserExternalName(
                     select = "main_external_component_id,external_component_name,image_url,external_component_tier",
@@ -589,10 +597,56 @@ class TestScreenViewModel : ViewModel() {
 
             } catch (e: Exception) {
                 Log.e("ViewModel - getExternalInfo[ERROR]", "error: ${e.message}", e)
-            } finally {
-                _isLoading.value = false
-                _nextScreenRoute.value = EXTERNALINFOSCREEN_ROUTE
             }
+        }
+    }
+
+    private suspend fun getExternalValue() {
+            val apiService = RetrofitClient.getSupabaseApiService()
+            try {
+                val sortedExternalIDs =
+                    _user_externalInfo.value.external_component.sortedBy { it.external_component_slot_id }
+                        .map { it.external_component_id }
+
+                val apiResponse = apiService.getUserExterStatValue(
+                    select = "external_component_id,stat_id,stat_value",
+                    level = "in.(${
+                        _user_externalInfo.value.external_component.map { it.external_component_level }
+                            .joinToString(",")
+                    })",
+                    external_component_id = "in.(${
+                        sortedExternalIDs.joinToString(",")
+                    })"
+                )
+                val sortedApiResponse = sortedExternalIDs.map { id ->
+                    apiResponse.find { it.external_component_id == id }
+                }
+
+                _user_external_value.value = sortedApiResponse.filterNotNull()
+                Log.d("getExternalValue", "user_external_value: ${userExternalValue.value}")
+            } catch (e: Exception) {
+                Log.e("getExternalValue[ERROR]", "error: ${e.message}", e)
+            }
+    }
+
+    private suspend fun getExternalStat() {
+        val apiService = RetrofitClient.getSupabaseApiService()
+        try {
+            val statIds = _user_external_value.value.flatMap { listOf(it.stat_id, it.stat_id) } // 중복 추가
+            val statIdString = statIds.joinToString(",")
+            val apiResponse = apiService.getStatName(
+                select = "stat_name,stat_id",
+                stat_id = "in.($statIdString)"
+            )
+
+            _user_external_stat.value = apiResponse
+
+            Log.d("getExternalStat", "user_external_stat: ${userExternalStat.value}")
+        } catch (e: Exception) {
+            Log.e("getExternalStat[ERROR]", "error: ${e.message}", e)
+        } finally {
+            _isLoading.value = false
+            _nextScreenRoute.value = EXTERNALINFOSCREEN_ROUTE
         }
     }
 

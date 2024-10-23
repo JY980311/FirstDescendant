@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +40,7 @@ import com.example.firstdescendant.component.CustomBoxButton
 import com.example.firstdescendant.component.CustomTextField
 import com.example.firstdescendant.navigation.WEAPONINFOSCREEN_ROUTE
 import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
+import com.example.firstdescendant.ui.theme.DescendantContentText
 import com.example.firstdescendant.ui.theme.DescendantTypography
 import kotlinx.coroutines.delay
 
@@ -50,6 +52,8 @@ fun UserMainScreen(
 
     val ouid = viewModel.test.collectAsStateWithLifecycle()
 
+    val userBasic by viewModel.basicInfo.collectAsStateWithLifecycle()
+
     val textField = viewModel.textField.collectAsStateWithLifecycle()
 
     val errorMessage = viewModel.errorMessage.collectAsStateWithLifecycle()
@@ -59,6 +63,8 @@ fun UserMainScreen(
     val nextScreenRoute = viewModel.nextScreenRoute.collectAsStateWithLifecycle()
 
     var disableScreen by remember { mutableStateOf(true) }
+
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(nextScreenRoute.value) {
         if (nextScreenRoute.value != null) {
@@ -95,7 +101,7 @@ fun UserMainScreen(
     ) {
         Text(
             text = buildAnnotatedString {
-                withStyle(SpanStyle(fontSize = 18.sp))
+                withStyle(SpanStyle(fontSize = 33.sp))
                 {
                     append(" THE ")
                 }
@@ -108,79 +114,137 @@ fun UserMainScreen(
         )
 
         CustomTextField(
+            modifier = Modifier,
             value = textField.value,
             onValueChange = { viewModel.getText(it) }
         )
 
         CustomBoxButton(
-            modifier = Modifier.height(50.dp),
+            modifier = Modifier
+                .height(50.dp)
+                .padding(bottom = 10.dp),
             onClick = {
                 Log.d("UI", "사용자 조회 버튼 클릭됨")
                 viewModel.getOuid()
+                viewModel.getUserBasicInfo()
+                keyboardController?.hide()
             },
             text = "사용자 조회"
         )
 
+        Text(text = "뿡뿡뿡뿡뿡뿡", fontSize = 80.sp)
+
         if (ouid.value.ouid.isNotEmpty()) {
+            "닉네임 : ${userBasic.user_name}"
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(DescendantContentText.mainTitleText) {
+                        append("닉네임 : ")
+                    }
+                    withStyle(DescendantContentText.mainContentText) {
+                        append(userBasic.user_name)
+                    }
+                }
+            )
+
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(DescendantContentText.mainTitleText) {
+                        append("게임에 사용하는 언어 : ")
+                    }
+                    withStyle(DescendantContentText.mainContentText){
+                        append(userBasic.game_language)
+                    }
+                }
+            )
+
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(DescendantContentText.mainTitleText) {
+                        append("마스터리 레벨 : ")
+                    }
+                    withStyle(DescendantContentText.mainContentText){
+                        append(userBasic.mastery_rank_level.toString())
+                    }
+                }
+            )
+
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(DescendantContentText.mainTitleText) {
+                        append("사용하는 플랫폼 : ")
+                    }
+                    withStyle(DescendantContentText.mainContentText){
+                        append(userBasic.platform_type)
+                    }
+                }
+            )
+
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(DescendantContentText.mainTitleText) {
+                        append("사용하는 OS 언어 : ")
+                    }
+                    withStyle(DescendantContentText.mainContentText){
+                        append(userBasic.os_language)
+                    }
+                }
+            )
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 40.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally)
             ) {
                 CustomBoxButton(
-                    modifier = Modifier,
-                    onClick = {
-                        viewModel.getUserBasicInfo()
-                    },
-                    text = "사용자 기본 정보 조회",
-                    enabled =!isLoading.value
-                )
-
-                CustomBoxButton(
-                    modifier = Modifier,
+                    modifier = Modifier.weight(1f),
                     onClick = {
                         viewModel.getUserDescendantInfo()
                     },
                     text = "장착 계승자 정보 조회",
                     enabled = !isLoading.value
                 )
-            }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
                 CustomBoxButton(
+                    modifier = Modifier.weight(1f),
                     onClick = {
                         viewModel.getUserWeaponInfo()
                     },
                     text = "장착 무기 정보 조회",
                     enabled = !isLoading.value
                 )
+            }
 
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement =Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally)
+            ) {
                 CustomBoxButton(
+                    modifier = Modifier.weight(1f),
                     onClick = {
                         viewModel.getUserReactorInfo()
                     },
                     text = "장착 반응로 정보 조회",
                     enabled = !isLoading.value
                 )
-            }
 
-            CustomBoxButton(
-                onClick = {
-                    viewModel.getUserExternalInfo()
-                },
-                text = "장착 외장부품 정보 조회",
-                enabled = !isLoading.value
-            )
+                CustomBoxButton(
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        viewModel.getUserExternalInfo()
+                    },
+                    text = "장착 외장부품 정보 조회",
+                    enabled = !isLoading.value
+                )
+            }
         } else if (
             errorMessage.value.isNotEmpty() && !isLoading.value
         ) {
             Text(
                 text = errorMessage.value,
-                color = Color.Red
+                color = Color.Red,
+                style = DescendantTypography.mainTitleText
             )
         }
     }

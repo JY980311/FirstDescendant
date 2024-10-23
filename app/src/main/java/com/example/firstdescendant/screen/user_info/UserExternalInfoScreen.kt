@@ -1,5 +1,6 @@
 package com.example.firstdescendant.screen.user_info
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +32,7 @@ import com.example.firstdescendant.component.NameBox
 import com.example.firstdescendant.data.user.external.UserExternalData
 import com.example.firstdescendant.data.user.external.UserExternalName
 import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
+import com.example.firstdescendant.ui.theme.DescendantContentText
 import com.example.firstdescendant.ui.theme.DescendantTypography
 
 @Composable
@@ -39,6 +41,8 @@ fun UserExternalInfoScreen(
 ) {
     val userExternalInfo by viewModel.userExternalInfo.collectAsStateWithLifecycle()
     val userExternal by viewModel.userExternal.collectAsStateWithLifecycle()
+    val userExternalValue by viewModel.userExternalValue.collectAsStateWithLifecycle()
+    val userExternalStat by viewModel.userExternalStat.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -46,19 +50,22 @@ fun UserExternalInfoScreen(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
             .statusBarsPadding()
-            .navigationBarsPadding()
+            .navigationBarsPadding(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = buildAnnotatedString {
-                append("EXTERNAL COMPONENT")
-                withStyle(SpanStyle(fontStyle = DescendantTypography.subHeadLineText.fontStyle)){
+                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("EXTERNAL COMPONENT")
+                }
+                withStyle(SpanStyle(fontSize = 33.sp)){
                     append(" INFO")
                 }
             },
             style = DescendantTypography.headLineText
         )
 
-        Spacer(modifier = Modifier.height(60.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         for (i in 0 until userExternalInfo.external_component.size) {
             Column(
@@ -73,7 +80,9 @@ fun UserExternalInfoScreen(
                     style = DescendantTypography.weaponMainText
                 )
                 CustomImageBox(
-                    modifier = Modifier.size(250.dp, 170.dp).padding(top = 4.dp),
+                    modifier = Modifier
+                        .size(250.dp, 170.dp)
+                        .padding(top = 4.dp),
                     imageUrl = userExternal[i].image_url,
                     tier = userExternal[i].external_component_tier
                 )
@@ -87,8 +96,40 @@ fun UserExternalInfoScreen(
                 )
             }
 
-            NameBox(text = "외장부품 옵션")
-            Text(text = userExternalInfo.external_component[i].external_component_additional_stat.map { "${it.additional_stat_name} : ${it.additional_stat_value}\n" }.joinToString(""))
+            Column(
+                modifier= Modifier.fillMaxWidth().padding(bottom = 30.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement =  Arrangement.spacedBy(10.dp)
+            ) {
+                NameBox(text = "외장부품 기본 옵션")
+                Text(
+                    text = userExternalStat.find { it.stat_id == userExternalValue[i].stat_id }?.stat_name ?: "가져올 수 없습니다.",
+                    style = DescendantTypography.mainTitleText
+                )
+
+                NameBox(text = "외장부품 랜덤 옵션")
+                if(userExternalInfo.external_component[i].external_component_additional_stat.isEmpty()){
+                    Text(
+                        text = "가져올 수 없습니다.",
+                        style = DescendantTypography.mainContentText
+                    )
+                }
+                else{
+                    for(j in 0 until userExternalInfo.external_component[i].external_component_additional_stat.size){
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(DescendantContentText.mainTitleText) {
+                                    append(
+                                        "${userExternalInfo.external_component[i].external_component_additional_stat[j].additional_stat_name} : ")
+                                }
+                                withStyle(DescendantContentText.mainContentText){
+                                    append(userExternalInfo.external_component[i].external_component_additional_stat[j].additional_stat_value)
+                                }
+                            },
+                        )
+                    }
+                }
+            }
         }
     }
 }

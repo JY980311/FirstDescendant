@@ -2,9 +2,11 @@ package com.example.firstdescendant.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -14,9 +16,8 @@ object DescendantTypography {
     val headLineText = TextStyle(
         fontFamily = FontFamily(Font(R.font.dohyeon)),
         fontWeight = FontWeight.Medium,
-        fontSize = 50.sp,
-        lineHeight = 18.sp * 1.5,
-        letterSpacing = 50.sp * (-0.006),
+        fontSize = 40.sp,
+        letterSpacing = 40.sp * (-0.006),
         color = Color.White
     )
 
@@ -24,9 +25,8 @@ object DescendantTypography {
     val subHeadLineText = TextStyle(
         fontFamily = FontFamily(Font(R.font.dohyeon)),
         fontWeight = FontWeight.Medium,
-        fontSize = 43.sp,
-        lineHeight = 18.sp * 1.5,
-        letterSpacing = 43.sp * (-0.006),
+        fontSize = 33.sp,
+        letterSpacing = 33.sp * (-0.006),
         color = Color.White
     )
 
@@ -84,10 +84,35 @@ object DescendantTypography {
         color = Color.White
     )
 
-    val nameBoxText = TextStyle(
-        //fontFamily = FontFamily(Font(R.font.dohyeon)),
-        fontWeight = FontWeight.Normal,
+    val mainTitleText = TextStyle(
+        fontFamily = FontFamily(Font(R.font.nanum_square_eb)),
+        fontSize = 15.sp,
         lineHeight = 15.sp * 1.5,
+        letterSpacing = 15.sp * (-0.006),
+        color = Color.White
+    )
+
+    val mainContentText = TextStyle(
+        fontFamily = FontFamily(Font(R.font.nanum_square_r)),
+        fontSize = 15.sp,
+        lineHeight = 15.sp * 1.5,
+        letterSpacing = 15.sp * (-0.006),
+        color = Color.White
+    )
+}
+
+object DescendantContentText {
+    val mainTitleText = SpanStyle(
+        fontFamily = FontFamily(Font(R.font.nanum_square_eb)),
+        fontSize = 15.sp,
+        fontWeight = FontWeight.Bold,
+        letterSpacing = 15.sp * (-0.006),
+        color = Color.White
+    )
+
+    val mainContentText = SpanStyle(
+        fontFamily = FontFamily(Font(R.font.nanum_square_r)),
+        fontSize = 15.sp,
         letterSpacing = 15.sp * (-0.006),
         color = Color.White
     )

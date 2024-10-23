@@ -26,6 +26,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,12 +35,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.example.firstdescendant.R
 import com.example.firstdescendant.component.CustomImageBox
 import com.example.firstdescendant.component.NameBox
 import com.example.firstdescendant.data.user.descendantinfo.UserModule
 import com.example.firstdescendant.data.user.module.UserDescendantModuleInfo
 import com.example.firstdescendant.data.user.module.UserWeaponModuleInfo
 import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
+import com.example.firstdescendant.ui.theme.DescendantContentText
 import com.example.firstdescendant.ui.theme.DescendantTypography
 import com.example.firstdescendant.ui.theme.mainBackgroundColor
 import com.example.firstdescendant.ui.theme.moduleBorderColor
@@ -67,8 +71,10 @@ fun UserDescendantInfoScreen(
     ) {
         Text(
             text = buildAnnotatedString {
-                append("DESCENDANT")
-                withStyle(SpanStyle(fontStyle = DescendantTypography.subHeadLineText.fontStyle)){
+                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("DESCENDANT")
+                }
+                withStyle(SpanStyle(fontSize = 33.sp)){
                     append(" INFO")
                 }
             },
@@ -76,7 +82,7 @@ fun UserDescendantInfoScreen(
         )
         Row(
             modifier = Modifier
-                .padding(top = 60.dp, bottom = 20.dp),
+                .padding(top = 30.dp, bottom = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(15.dp)
         ){
             CustomImageBox(
@@ -88,9 +94,38 @@ fun UserDescendantInfoScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(text = "사용자 이름 : ${userDescendantInfo.user_name}")
-                Text(text = "계승자 이름 : ${userDescendant.descendant_name}")
-                Text(text = "계승자 레벨 : ${userDescendantInfo.descendant_level}")
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(DescendantContentText.mainTitleText) {
+                            append("사용자 이름 : ")
+                        }
+                        withStyle(DescendantContentText.mainContentText){
+                            append(userDescendantInfo.user_name)
+                        }
+                    }
+                )
+
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(DescendantContentText.mainTitleText) {
+                            append("계승자 이름 : ")
+                        }
+                        withStyle(DescendantContentText.mainContentText){
+                            append(userDescendant.descendant_name)
+                        }
+                    }
+                )
+
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(DescendantContentText.mainTitleText) {
+                            append("계승자 레벨 : ")
+                        }
+                        withStyle(DescendantContentText.mainContentText){
+                            append(userDescendantInfo.descendant_level.toString())
+                        }
+                    }
+                )
             }
         }
 
@@ -106,8 +141,27 @@ fun UserDescendantInfoScreen(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ){
-                Text(text = "현재 용량 : ${userDescendantInfo.module_capacity}")
-                Text(text = "최대 용량 : ${userDescendantInfo.module_max_capacity}")
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(DescendantContentText.mainTitleText) {
+                            append("현재 용량 : ")
+                        }
+                        withStyle(DescendantContentText.mainContentText){
+                            append(userDescendantInfo.module_capacity.toString())
+                        }
+                    }
+                )
+
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(DescendantContentText.mainTitleText) {
+                            append("최대 용량 : ")
+                        }
+                        withStyle(DescendantContentText.mainContentText){
+                            append(userDescendantInfo.module_max_capacity.toString())
+                        }
+                    }
+                )
             }
         }
 
@@ -173,7 +227,8 @@ fun ModuleBox(
             Text(
                 modifier = Modifier.align(Alignment.Center),
                 text = "Empty(빈칸)",
-                fontSize = 12.sp
+                fontSize = 12.sp,
+                fontFamily = FontFamily(Font(R.font.nanum_square_r))
             )
         }
     } else {
@@ -211,10 +266,15 @@ fun ModuleBox(
                         )
                     }
                 }
-                Row {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
                     Text(
+                        modifier = Modifier.padding(end = 8.dp),
                         text = (matchingModule?.module_name?: "Unknown") + "(${module.module_enchant_level})",
                         fontSize = 12.sp,
+                        fontFamily = FontFamily(Font(R.font.nanum_square_r)),
                     )
                 }
             }
@@ -282,6 +342,7 @@ fun ModuleLayout(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun UserDescendantInfoScreenPreview() {
@@ -294,4 +355,4 @@ fun UserDescendantInfoScreenPreview() {
             viewModel = TestScreenViewModel()
         )
     }
-}
+}*/

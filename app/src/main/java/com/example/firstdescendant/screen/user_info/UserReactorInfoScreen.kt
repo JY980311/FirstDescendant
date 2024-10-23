@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +40,7 @@ import com.example.firstdescendant.data.user.reactor.UserReactorAdditionalStat
 import com.example.firstdescendant.data.user.reactor.UserReactorData
 import com.example.firstdescendant.data.user.reactor.UserReactorInfo
 import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
+import com.example.firstdescendant.ui.theme.DescendantContentText
 import com.example.firstdescendant.ui.theme.DescendantTypography
 import com.example.firstdescendant.ui.theme.mainBackgroundColor
 
@@ -53,13 +57,16 @@ fun UserReactorInfoScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .verticalScroll(rememberScrollState())
             .statusBarsPadding()
-            .navigationBarsPadding()
+            .navigationBarsPadding(),
     ) {
         Text(
             text = buildAnnotatedString {
-                append("REACTOR")
-                withStyle(SpanStyle(fontStyle = DescendantTypography.subHeadLineText.fontStyle)){
+                withStyle(SpanStyle(fontWeight = FontWeight.Bold)){
+                    append("REACTOR")
+                }
+                withStyle(SpanStyle(fontSize = 33.sp)){
                     append(" INFO")
                 }
             },
@@ -68,7 +75,7 @@ fun UserReactorInfoScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 60.dp),
+                .padding(top = 30.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
@@ -99,18 +106,42 @@ fun UserReactorInfoScreen(
             }
 
             Column(
-                modifier = Modifier.fillMaxSize().padding(top = 4.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 21.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(DescendantContentText.mainTitleText) {
+                            append("스킬 위력 : ")
+                        }
+                        withStyle(DescendantContentText.mainContentText){
+                            append("${userReactorSkillPower.skill_atk_power}")
+                        }
+                    },
+                )
 
-                Text(text = "스킬 위력 : ${userReactorSkillPower.skill_atk_power}")
-                Text(text = "보조 공격 위력 : ${userReactorSkillPower.sub_skill_atk_power}")
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(DescendantContentText.mainTitleText) {
+                            append("보조 공격 위력 : ")
+                        }
+                        withStyle(DescendantContentText.mainContentText){
+                            append("${userReactorSkillPower.sub_skill_atk_power}")
+                        }
+                    }
+                )
 
                 NameBox(
                     modifier= Modifier.padding(vertical = 4.dp),
                     text = "최적화 조건"
                 )
 
-                Text(text = userReactor.optimized_condition_type)
+                Text(
+                    text = userReactor.optimized_condition_type,
+                    style = DescendantTypography.mainContentText
+                )
 
 
                 NameBox(
@@ -119,10 +150,49 @@ fun UserReactorInfoScreen(
                 )
                 
                 if(reactorSkillCoefficient.isNotEmpty()) {
-                    Text(text = "스킬 위력 증가율 [1] : ${reactorSkillCoefficient[0].coefficient_stat_id}")
-                    Text(text = "스킬 위력 증가율 수치 [1] : ${reactorSkillCoefficient[0].coefficient_stat_value}")
-                    Text(text = "스킬 위력 증가율 [2] : ${reactorSkillCoefficient[1].coefficient_stat_id}")
-                    Text(text = "스킬 위력 증가율 수치 [2] : ${reactorSkillCoefficient[1].coefficient_stat_value}")
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(DescendantContentText.mainTitleText) {
+                                append("스킬 위력 증가율 [1] : ")
+                            }
+                            withStyle(DescendantContentText.mainContentText){
+                                append(reactorSkillCoefficient[0].coefficient_stat_id)
+                            }
+                        }
+                    )
+
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(DescendantContentText.mainTitleText) {
+                                append("스킬 위력 증가율 수치 [1] :")
+                            }
+                            withStyle(DescendantContentText.mainContentText){
+                                append("${reactorSkillCoefficient[0].coefficient_stat_value}")
+                            }
+                        }
+                    )
+
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(DescendantContentText.mainTitleText) {
+                                append("스킬 위력 증가율 [2] : ")
+                            }
+                            withStyle(DescendantContentText.mainContentText){
+                                append(reactorSkillCoefficient[1].coefficient_stat_id)
+                            }
+                        }
+                    )
+
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(DescendantContentText.mainTitleText) {
+                                append("스킬 위력 증가율 수치 [2] :")
+                            }
+                            withStyle(DescendantContentText.mainContentText){
+                                append("${reactorSkillCoefficient[1].coefficient_stat_value}")
+                            }
+                        }
+                    )
                 }
 
                 NameBox(
@@ -131,7 +201,25 @@ fun UserReactorInfoScreen(
                 )
 
                 Text(
-                    text = userReactorInfo.reactor_additional_stat.joinToString(""){"${it.additional_stat_name}\n${it.additional_stat_value}\n"}
+                    text = buildAnnotatedString {
+                        withStyle(DescendantContentText.mainTitleText) {
+                            append(userReactorInfo.reactor_additional_stat[0].additional_stat_name)
+                        }
+                        withStyle(DescendantContentText.mainContentText){
+                            append(" : ${userReactorInfo.reactor_additional_stat[0].additional_stat_value}")
+                        }
+                    }
+                )
+
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(DescendantContentText.mainTitleText) {
+                            append(userReactorInfo.reactor_additional_stat[1].additional_stat_name)
+                        }
+                        withStyle(DescendantContentText.mainContentText){
+                            append(" : ${userReactorInfo.reactor_additional_stat[1].additional_stat_value}")
+                        }
+                    }
                 )
             }
         }

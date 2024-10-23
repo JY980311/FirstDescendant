@@ -1,15 +1,10 @@
 package com.example.firstdescendant.navigation
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.firstdescendant.screen.user_info.UserBasicInfoScreen
 import com.example.firstdescendant.screen.user_info.UserDescendantInfoScreen
 import com.example.firstdescendant.screen.user_info.UserExternalInfoScreen
 import com.example.firstdescendant.screen.user_info.UserMainScreen
@@ -19,7 +14,7 @@ import com.example.firstdescendant.screen.viewmodel.TestScreenViewModel
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
-    val viewModel = TestScreenViewModel()
+    val viewModel = TestScreenViewModel(context = LocalContext.current)
 
     NavHost(
         navController = navController,
@@ -30,9 +25,6 @@ fun NavigationGraph(navController: NavHostController) {
                 navHostController = navController,
                 viewModel = viewModel
             )
-        }
-        composable(BASICINFOSCREEN_ROUTE){
-            UserBasicInfoScreen(viewModel = viewModel)
         }
         composable(DESCENDANTINFOSCREEN_ROUTE){
             UserDescendantInfoScreen(viewModel = viewModel)

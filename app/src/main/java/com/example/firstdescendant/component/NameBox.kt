@@ -23,8 +23,9 @@ fun NameBox(
             .border(1.dp, Color.White, RoundedCornerShape(8.dp))
     ){
         Text(
-            modifier = Modifier.padding(4.dp),
+            modifier = Modifier.padding(8.dp),
             text = text,
+            style = DescendantTypography.mainTitleText.copy(fontSize = fontSize?.sp ?: 18.sp)
         )
     }
 }
