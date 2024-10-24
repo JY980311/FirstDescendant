@@ -55,6 +55,7 @@ fun UserReactorInfoScreen(
             .navigationBarsPadding(),
     ) {
         Text(
+            modifier = Modifier.padding(top = 5.dp),
             text = buildAnnotatedString {
                 withStyle(SpanStyle(fontWeight = FontWeight.Bold)){
                     append("REACTOR")

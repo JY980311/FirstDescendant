@@ -32,6 +32,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -88,14 +89,15 @@ fun UserMainScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
+            modifier = Modifier.padding(top = 5.dp),
             text = buildAnnotatedString {
-                withStyle(SpanStyle(fontSize = 33.sp))
+                withStyle(SpanStyle(fontSize = 28.sp))
                 {
                     append(" THE ")
                 }
                 withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("FIRST")
-                    append("\nDESCENDANT")
+                    append("\nDESCENDANT LINK")
                 }
             },
             style = DescendantTypography.headLineText
@@ -237,6 +239,23 @@ fun UserMainScreen(
                 style = DescendantTypography.mainTitleText
             )
         }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.align(Alignment.Bottom),
+                text = "* ",
+                color = Color.LightGray,
+                fontSize = 8.sp,
+            )
+            Text(
+                text = stringResource(R.string.information),
+                style = DescendantTypography.mainContentText,
+                color = Color.LightGray,
+                fontSize = 8.sp
+            )
+        }
     }
 
     if (isLoading.value) {
@@ -271,5 +290,24 @@ fun LevelBox(
                     .background(Color.Red)
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Test1() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "* ",
+            color = Color.LightGray,
+            fontSize = 8.sp
+        )
+        Text(
+            text = stringResource(R.string.information),
+            color = Color.LightGray,
+            fontSize = 8.sp
+        )
     }
 }

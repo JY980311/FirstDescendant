@@ -53,6 +53,7 @@ fun UserExternalInfoScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
+            modifier = Modifier.padding(top = 5.dp),
             text = buildAnnotatedString {
                 withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("EXTERNAL COMPONENT")
