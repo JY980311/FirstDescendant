@@ -15,8 +15,8 @@ object DescendantTypography {
     val headLineText = TextStyle(
         fontFamily = FontFamily(Font(R.font.dohyeon)),
         fontWeight = FontWeight.Medium,
-        fontSize = 40.sp,
-        letterSpacing = 40.sp * (-0.006),
+        fontSize = 35.sp,
+        letterSpacing = 35.sp * (-0.006),
         color = Color.White
     )
 
@@ -31,14 +31,14 @@ object DescendantTypography {
 
     val boxButtonText = TextStyle(
         fontFamily = FontFamily(Font(R.font.nanum_square_eb)),
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         lineHeight = 15.sp * 1.5,
         letterSpacing = 15.sp * (-0.006),
         color = Color.Black
     )
 
     val textFieldText = TextStyle(
-        fontFamily = FontFamily(Font(R.font.dohyeon)),
+        fontFamily = FontFamily(Font(R.font.nanum_square_b)),
         fontWeight = FontWeight.Normal,
         fontSize = 18.sp,
         lineHeight = 18.sp * 1.5,
@@ -48,7 +48,7 @@ object DescendantTypography {
     )
 
     val placeholderText = TextStyle(
-        fontFamily = FontFamily(Font(R.font.dohyeon)),
+        fontFamily = FontFamily(Font(R.font.nanum_square_r)),
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         lineHeight = 12.sp * 1.5,

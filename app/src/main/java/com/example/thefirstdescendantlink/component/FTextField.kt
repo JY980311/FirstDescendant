@@ -43,7 +43,7 @@ fun FTextField(
     val interactionSource = remember { MutableInteractionSource() }
     val focused = interactionSource.collectIsFocusedAsState().value
     val keyboardController = LocalSoftwareKeyboardController.current
-
+    val prefix = "#"
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
@@ -51,7 +51,7 @@ fun FTextField(
             .height(53.dp)
             .border(
                 1.dp,
-                if (focused) focusedBorderColor else unFocusedBorderColor,
+                if (focused || value != "") focusedBorderColor else unFocusedBorderColor,
                 RoundedCornerShape(8.dp)
             )
             .background(textFieldInnerColor)
