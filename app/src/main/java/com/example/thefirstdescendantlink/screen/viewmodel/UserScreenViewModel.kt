@@ -129,6 +129,7 @@ class UserScreenViewModel(context: Context) : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             val apiService = RetrofitClient.getDecendantApi()
+            val currentTime = System.currentTimeMillis()
             try {
                 val apiResponse: UserOuid = apiService.getUserOuid(textField.value)
                 _test.update {
@@ -138,6 +139,11 @@ class UserScreenViewModel(context: Context) : ViewModel() {
                 dataStoreManager.saveOuid(test.value.ouid)
 
                 getUserBasicInfo()
+
+                val minimumTime = System.currentTimeMillis() - currentTime
+                if (minimumTime < 500) {
+                    delay(500 - minimumTime)
+                }
 
                 Log.d("ViewModel - getOuid", "ouid: ${test.value.ouid}")
             } catch (e: Exception) {
@@ -181,6 +187,11 @@ class UserScreenViewModel(context: Context) : ViewModel() {
                         5
                     )
                 ) {
+                    val minimumTime = System.currentTimeMillis() - currentTime
+                    if (minimumTime < 500) {
+                        delay(500 - minimumTime)
+                    }
+
                     Log.d("getBasicInfoTime", "캐시된 데이터 사용: $currentOuid")
                     _isLoading.value = false
                     return@launch
