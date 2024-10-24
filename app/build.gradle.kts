@@ -106,4 +106,7 @@ dependencies {
 
     //GSON
     implementation("com.google.code.gson:gson:2.10")
+
+    //Splash Screen
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }
