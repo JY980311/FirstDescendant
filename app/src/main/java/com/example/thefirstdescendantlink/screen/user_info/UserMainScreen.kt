@@ -293,21 +293,3 @@ fun LevelBox(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun Test1() {
-    Row(
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = "* ",
-            color = Color.LightGray,
-            fontSize = 8.sp
-        )
-        Text(
-            text = stringResource(R.string.information),
-            color = Color.LightGray,
-            fontSize = 8.sp
-        )
-    }
-}

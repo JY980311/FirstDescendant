@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -227,7 +228,8 @@ fun ModuleBox(
                 modifier = Modifier.align(Alignment.Center),
                 text = "Empty(${stringResource(R.string.empty)})",
                 fontSize = 12.sp,
-                fontFamily = FontFamily(Font(R.font.nanum_square_r))
+                fontFamily = FontFamily(Font(R.font.nanum_square_r)),
+                color = Color.White
             )
         }
     } else {
@@ -274,6 +276,7 @@ fun ModuleBox(
                         text = (matchingModule?.module_name?: "Unknown") + "(${module.module_enchant_level})",
                         fontSize = 12.sp,
                         fontFamily = FontFamily(Font(R.font.nanum_square_r)),
+                        color = Color.White
                     )
                 }
             }

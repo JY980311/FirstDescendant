@@ -23,10 +23,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -64,6 +67,15 @@ fun UserWeaponInfoScreen(
     val userWeaponInfo by viewModel.userWeaponInfo.collectAsStateWithLifecycle()
     val userWeapon by viewModel.userWeapon.collectAsStateWithLifecycle()
     val userWeaponModulesInfo by viewModel.userWeaponModule.collectAsStateWithLifecycle()
+
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = remember { configuration.screenWidthDp }
+
+    val contentScale = if (screenWidthDp >= 1280) {
+        ContentScale.Fit // 8인치 이상에서는 Fit 옵션 사용
+    } else {
+        ContentScale.Crop // 그 외에는 Crop 옵션 사용
+    }
 
     Column(
         modifier = Modifier
@@ -128,7 +140,8 @@ fun UserWeaponInfoScreen(
                             .fillMaxWidth()
                             .padding(bottom = 4.dp),
                         imageUrl = userWeapon[i].image_url,
-                        tier = userWeapon[i].weapon_tier
+                        tier = userWeapon[i].weapon_tier,
+                        contentScale = contentScale
                     )
 
                     Row(
@@ -285,7 +298,8 @@ fun WeaponModuleBox(
                 modifier = Modifier.align(Alignment.Center),
                 text = "Empty(빈칸)",
                 fontSize = 12.sp,
-                fontFamily = FontFamily(Font(R.font.nanum_square_r))
+                fontFamily = FontFamily(Font(R.font.nanum_square_r)),
+                color = Color.White
             )
         }
     } else {
@@ -328,7 +342,8 @@ fun WeaponModuleBox(
                         text = "${matchingModule?.module_name ?: "Unknown"}(${module.module_enchant_level})",
                         fontSize = 12.sp,
                         fontFamily = FontFamily(Font(R.font.nanum_square_r)),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = Color.White
                     )
                 }
             }
