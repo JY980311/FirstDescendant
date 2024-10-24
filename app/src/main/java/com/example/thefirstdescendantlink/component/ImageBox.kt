@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,6 +28,7 @@ import com.example.thefirstdescendantlink.ui.theme.standardColor
 fun ImageBox(
     modifier: Modifier = Modifier,
     imageUrl: String,
+    contentScale: ContentScale = ContentScale.Crop,
     tier: String? = null
 ) {
     //궁극
@@ -85,7 +87,7 @@ fun ImageBox(
             modifier = Modifier.fillMaxSize(),
             model = imageUrl,
             contentDescription = stringResource(R.string.data_image),
-            contentScale = androidx.compose.ui.layout.ContentScale.Crop
+            contentScale = contentScale
         )
     }
 }
