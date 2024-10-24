@@ -99,15 +99,19 @@ class UserScreenViewModel(context: Context) : ViewModel() {
     private val _user_external = MutableStateFlow<List<UserExternalInfo>>(emptyList())
     val userExternal = _user_external.asStateFlow()
 
+    /** 외장부품 기본 스텟 받아오는 정보 */
     private val _user_external_value = MutableStateFlow(emptyList<UserExternalStatValue>())
     val userExternalValue = _user_external_value.asStateFlow()
 
+    /** 외장부품 기본 스텟 id와 매칭하여 이름을 가져옴 */
     private val _user_external_stat = MutableStateFlow(emptyList<UserExternalStatName>())
     val userExternalStat = _user_external_stat.asStateFlow()
 
+    /** 로딩 중인지 확인 */
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
+    /** 다음 화면으로 이동할 때 사용할 라우트 */
     private val _nextScreenRoute = MutableStateFlow<String?>(null)
     val nextScreenRoute = _nextScreenRoute.asStateFlow()
 
@@ -210,7 +214,7 @@ class UserScreenViewModel(context: Context) : ViewModel() {
                     delay(500 - minimumTime)
                 }
             } catch (e: Exception) {
-                Log.e("ViewModel - getBasicInfo[ERROR]", "error: ${e.message}", e)
+                handleError("getUserBasicInfo", e)
             } finally {
                 _isLoading.value = false
             }
@@ -255,15 +259,10 @@ class UserScreenViewModel(context: Context) : ViewModel() {
                 if (minimumTime < 500) {
                     delay(500 - minimumTime)
                 } else {
-                    Log.e(
-                        "ViewModel - getUserWeaponInfo",
-                        "getUserWeaponInfo called with invalid ouid: ${currentOuid}"
-                    )
+                    Log.e("getUserWeaponInfo", "getUserWeaponInfo called with invalid ouid: ${currentOuid}")
                 }
-            } catch (e: HttpException) {
-                Log.e("ViewModel - getUserWeaponInfo[ERROR]", "error: ${e.message}", e)
-                val errorBody = e.response()?.errorBody()?.string()
-                Log.e("API_ERROR", "Error body: $errorBody")
+            } catch (e: Exception) {
+               handleError("getUserWeaponInfo", e)
             }
         }
     }
@@ -288,7 +287,7 @@ class UserScreenViewModel(context: Context) : ViewModel() {
 
                 Log.d("ViewModel - getWeaponInfo", "user_weapon: ${userWeapon.value}")
             } catch (e: Exception) {
-                Log.e("ViewModel - getWeaponInfo[ERROR]", "error: ${e.message}", e)
+                handleError("getWeaponInfo", e)
             }
         }
     }
@@ -307,7 +306,7 @@ class UserScreenViewModel(context: Context) : ViewModel() {
 
                 _user_WeaponModule.value = apiResponse
             } catch (e: Exception) {
-                Log.e("ViewModel - getWeaponModule[ERROR]", "error: ${e.message}", e)
+                handleError("getWeaponModule", e)
             } finally {
                 _isLoading.value = false
                 _nextScreenRoute.value = WEAPONINFOSCREEN_ROUTE
@@ -347,15 +346,10 @@ class UserScreenViewModel(context: Context) : ViewModel() {
                 if (minimumTime < 500) {
                     delay(500 - minimumTime)
                 } else {
-                    Log.d(
-                        "ViewModel - getUserReactorInfo",
-                        "getUserReactorInfo called with invalid ouid: $currentOuid"
-                    )
+                    Log.d("getUserReactorInfo", "getUserReactorInfo called with invalid ouid: $currentOuid")
                 }
-            } catch (e: HttpException) {
-                Log.e("ViewModel - getUserReactorInfo[ERROR]", "error: ${e.message}", e)
-                val errorBody = e.response()?.errorBody()?.string()
-                Log.e("API_ERROR", "Error body: $errorBody")
+            } catch (e: Exception) {
+               handleError("getUserReactorInfo", e)
             }
         }
     }
@@ -378,9 +372,9 @@ class UserScreenViewModel(context: Context) : ViewModel() {
                     optimized_condition_type = apiResponse[0].optimized_condition_type
                 )
 
-                Log.d("ViewModel - getUserReactorName", "user_reactor: ${userReactorInfo.value}")
+                Log.d("getUserReactorName", "user_reactor: ${userReactorInfo.value}")
             } catch (e: Exception) {
-                Log.e("ViewModel - getUserReactorName[ERROR]", "error: ${e.message}", e)
+                handleError("getReactorInfo", e)
             }
         }
     }
@@ -416,12 +410,9 @@ class UserScreenViewModel(context: Context) : ViewModel() {
 
                 getReactorSkillCoefficient()
 
-                Log.d(
-                    "ViewModel - getUserReactorSkillPower",
-                    "user_reactor_skill_power: ${userReactorSkillPower.value}"
-                )
+                Log.d("getUserReactorSkillPower", "user_reactor_skill_power: ${userReactorSkillPower.value}")
             } catch (e: Exception) {
-                Log.e("ViewModel - getUserReactorSkillPower[ERROR]", "error: ${e.message}", e)
+                handleError("getReactorSkillPower", e)
             }
         }
     }
@@ -437,12 +428,9 @@ class UserScreenViewModel(context: Context) : ViewModel() {
 
                 _reactor_coefficient.value = apiResponse
 
-                Log.d(
-                    "ViewModel - getReactorSkillCoefficient",
-                    "reactor_additional_stat: ${reactorCoefficient.value}"
-                )
+                Log.d("getReactorSkillCoefficient", "reactor_additional_stat: ${reactorCoefficient.value}")
             } catch (e: Exception) {
-                Log.e("ViewModel - getReactorSkillCoefficient[ERROR]", "error: ${e.message}", e)
+                handleError("getReactorSkillCoefficient", e)
             } finally {
                 _isLoading.value = _reactor_coefficient.value.isEmpty()
                 _nextScreenRoute.value = REACTORINFOSCREEN_ROUTE
@@ -486,13 +474,10 @@ class UserScreenViewModel(context: Context) : ViewModel() {
                 if (minimumTime < 500) {
                     delay(500 - minimumTime)
                 } else {
-                    Log.e(
-                        "ViewModel - getDescendantInfo",
-                        "getDescendantInfo called with invalid ouid: ${currentOuid}"
-                    )
+                    Log.e("getDescendantInfo", "getDescendantInfo called with invalid ouid: ${currentOuid}")
                 }
             } catch (e: Exception) {
-                Log.e("ViewModel - getDescendantInfo[ERROR]", "error: ${e.message}", e)
+                handleError("getUserDescendantInfo", e)
             }
         }
     }
@@ -514,7 +499,7 @@ class UserScreenViewModel(context: Context) : ViewModel() {
                 )
 
             } catch (e: Exception) {
-                Log.e("ViewModel - getDescendantName[ERROR]", "error: ${e.message}", e)
+                handleError("getDescendantInfo", e)
             }
         }
     }
@@ -532,7 +517,7 @@ class UserScreenViewModel(context: Context) : ViewModel() {
                 )
                 _user_DescendantModule.value = apiResponse
             } catch (e: Exception) {
-                Log.e("ViewModel - getModuleNames[ERROR]", "error: ${e.message}", e)
+                handleError("getDescendantModule", e)
             } finally {
                 _isLoading.value = false
                 _nextScreenRoute.value = DESCENDANTINFOSCREEN_ROUTE
@@ -573,13 +558,10 @@ class UserScreenViewModel(context: Context) : ViewModel() {
                 if (minimumTime < 500) {
                     delay(500 - minimumTime)
                 } else {
-                    Log.e(
-                        "ViewModel - getUserExternalInfo",
-                        "getUserExternalInfo called with invalid ouid: ${currentOuid}"
-                    )
+                    Log.e("getUserExternalInfo", "getUserExternalInfo called with invalid ouid: ${currentOuid}")
                 }
             } catch (e: Exception) {
-                Log.e("ViewModel - getUserExternalInfo[ERROR]", "error: ${e.message}", e)
+                handleError("getUserExternalInfo", e)
             }
         }
     }
@@ -606,7 +588,7 @@ class UserScreenViewModel(context: Context) : ViewModel() {
                 Log.d("ViewModel - getExternalInfo", "user_external: ${userExternal.value}")
 
             } catch (e: Exception) {
-                Log.e("ViewModel - getExternalInfo[ERROR]", "error: ${e.message}", e)
+                handleError("getExternalInfo", e)
             }
         }
     }
@@ -635,7 +617,7 @@ class UserScreenViewModel(context: Context) : ViewModel() {
             _user_external_value.value = sortedApiResponse.filterNotNull()
             Log.d("getExternalValue", "user_external_value: ${userExternalValue.value}")
         } catch (e: Exception) {
-            Log.e("getExternalValue[ERROR]", "error: ${e.message}", e)
+            handleError("getExternalValue", e)
         }
     }
 
@@ -654,7 +636,7 @@ class UserScreenViewModel(context: Context) : ViewModel() {
 
             Log.d("getExternalStat", "user_external_stat: ${userExternalStat.value}")
         } catch (e: Exception) {
-            Log.e("getExternalStat[ERROR]", "error: ${e.message}", e)
+            handleError("getExternalStat", e)
         } finally {
             _isLoading.value = false
             _nextScreenRoute.value = EXTERNALINFOSCREEN_ROUTE
@@ -663,5 +645,14 @@ class UserScreenViewModel(context: Context) : ViewModel() {
 
     fun resetNextScreenRoute() {
         _nextScreenRoute.value = null
+    }
+
+    private fun handleError(Aname: String, e:Exception) {
+        if (e is HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            Log.e("API_ERROR", "$Aname: [ERROR] ${e.message}, Error body: $errorBody")
+        } else {
+            Log.e("$Aname [ERROR]", "Exception: ${e.message}", e)
+        }
     }
 }
