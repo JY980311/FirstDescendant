@@ -231,10 +231,7 @@ class UserScreenViewModel(context: Context) : ViewModel() {
             if (currentOuid.isNotEmpty() && currentOuid != "test") {
                 val lastWeaponTime = dataStoreManager.lastWeaponTime.first()
 
-                if (_user_weaponInfo.value.ouid == currentOuid && currentTime - lastWeaponTime < TimeUnit.MINUTES.toMillis(
-                        5
-                    )
-                ) {
+                if (_user_weaponInfo.value.ouid == currentOuid && currentTime - lastWeaponTime < TimeUnit.MINUTES.toMillis(5)) {
                     Log.d("getWeaponInfoTime", "이미 사용된 oui: $currentOuid")
                     _isLoading.value = false
                     _nextScreenRoute.value = WEAPONINFOSCREEN_ROUTE
@@ -323,10 +320,7 @@ class UserScreenViewModel(context: Context) : ViewModel() {
             val currentOuid = test.value.ouid
             if (currentOuid.isNotEmpty() && currentOuid != "test") {
                 val lastReactorTime = dataStoreManager.lastReactorTime.first()
-                if (_user_reactorInfo.value.ouid == currentOuid && currentTime - lastReactorTime < TimeUnit.MINUTES.toMillis(
-                        5
-                    )
-                ) {
+                if (_user_reactorInfo.value.ouid == currentOuid && currentTime - lastReactorTime < TimeUnit.MINUTES.toMillis(5)) {
                     Log.d("getReactorInfoTime", "이미 사용된 oui: $currentOuid")
                     _isLoading.value = false
                     _nextScreenRoute.value = REACTORINFOSCREEN_ROUTE
@@ -450,10 +444,7 @@ class UserScreenViewModel(context: Context) : ViewModel() {
 
                 val lastDescendantTime = dataStoreManager.lastDescendantTime.first()
 
-                if (_user_descendantInfo.value.ouid == currentOuid && currentTime - lastDescendantTime < TimeUnit.MINUTES.toMillis(
-                        5
-                    )
-                ) {
+                if (_user_descendantInfo.value.ouid == currentOuid && currentTime - lastDescendantTime < TimeUnit.MINUTES.toMillis(5)) {
                     Log.d("getDescendantInfoTime", "이미 사용된 oui: $currentOuid")
                     _isLoading.value = false
                     _nextScreenRoute.value = DESCENDANTINFOSCREEN_ROUTE
@@ -534,10 +525,7 @@ class UserScreenViewModel(context: Context) : ViewModel() {
 
             if (currentOuid.isNotEmpty() && currentOuid != "test") {
                 val lastExternalTime = dataStoreManager.lastExternalTime.first()
-                if (_user_externalInfo.value.ouid == currentOuid && currentTime - lastExternalTime < TimeUnit.MINUTES.toMillis(
-                        5
-                    )
-                ) {
+                if (_user_externalInfo.value.ouid == currentOuid && currentTime - lastExternalTime < TimeUnit.MINUTES.toMillis(5)) {
                     Log.d("getExternalInfoTime", "이미 사용된 oui: $currentOuid")
                     _isLoading.value = false
                     _nextScreenRoute.value = EXTERNALINFOSCREEN_ROUTE
