@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,6 +53,9 @@ fun FButton(
         0.9f to Color.White,
     )
 
+
+    val interactionSource = remember { MutableInteractionSource() }
+
     LaunchedEffect(isClicked) {
         if (!isClicked) {
             delay(clickDelay)
@@ -69,11 +74,15 @@ fun FButton(
             .background(Color.Transparent)
             .width(160.dp)
             .height(100.dp)
-            .clickable(enabled = isClicked && enabled) {
-                if (isClicked) {
-                    isClicked = false
-                    onClick()
-                }
+            .clickable(
+                enabled = enabled && isClicked,
+                interactionSource = interactionSource,
+                indication = rememberRipple(
+                    color = Color.LightGray
+                )
+            ) {
+                isClicked = false
+                onClick()
             }
     ) {
         Column(

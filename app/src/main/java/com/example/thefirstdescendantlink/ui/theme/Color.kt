@@ -11,7 +11,7 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 /** 메인 배경 색 */
-val mainBackgroundColor = Color(0xFF313131)
+val mainBackgroundColor = Color(0xFF2E2E2E)
 
 /** 버튼 메인 배경 색 */
 val mainButtonColor = Color(0xFFD9D9D9)

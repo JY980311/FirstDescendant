@@ -2,10 +2,12 @@ package com.example.thefirstdescendantlink.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +40,8 @@ fun UserSearchButton(
     var isClicked by remember { mutableStateOf(true) }
     val clickDelay = 300L
 
+    val interactionSource = remember { MutableInteractionSource()}
+
     LaunchedEffect(isClicked) {
         if (!isClicked) {
             delay(clickDelay)
@@ -51,12 +55,19 @@ fun UserSearchButton(
             .width(160.dp)
             .height(100.dp)
             .background(color = backgroundColor)
-            .clickable(enabled = isClicked && enabled) {
-                if (isClicked) {
-                    isClicked = false
-                    onClick()
+            .clickable(
+                interactionSource = interactionSource,
+                indication = rememberRipple(
+                    color = Color.Black
+                ),
+                enabled = enabled && isClicked,
+                onClick = {
+                    if (isClicked) {
+                        isClicked = false
+                        onClick()
+                    }
                 }
-            }
+            )
     ) {
         Text(
             modifier = Modifier

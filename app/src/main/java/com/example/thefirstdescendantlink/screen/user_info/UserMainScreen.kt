@@ -252,7 +252,7 @@ fun UserMainScreen(
                 text = stringResource(R.string.information),
                 style = DescendantTypography.mainContentText,
                 color = Color.LightGray,
-                fontSize = 8.sp
+                fontSize = 10.sp
             )
         }
     }

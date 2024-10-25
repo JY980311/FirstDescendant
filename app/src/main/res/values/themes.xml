@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <style name="Theme.DescendantSplashScreen" parent="Theme.SplashScreen">
+        <item name ="windowSplashScreenBackground">@color/main_color</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/im_288x288</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="postSplashScreenTheme">@style/Theme.FirstDescendant</item>
+    </style>
     <style name="Theme.FirstDescendant" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
