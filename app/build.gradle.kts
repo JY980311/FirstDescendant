@@ -7,11 +7,11 @@ plugins {
 
 
 android {
-    namespace = "com.example.thefirstdescendantlink"
+    namespace = "com.jjy9811.thefirstdescendantlink"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.thefirstdescendantlink"
+        applicationId = "com.jjy9811.thefirstdescendantlink"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
