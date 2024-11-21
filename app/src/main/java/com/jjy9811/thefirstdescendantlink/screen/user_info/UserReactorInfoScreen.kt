@@ -123,16 +123,17 @@ fun UserReactorInfoScreen(
                     }
                 )
 
-                NameBox(
-                    modifier= Modifier.padding(vertical = 4.dp),
-                    text = stringResource(R.string.optimization_condition)
-                )
+                if(userReactor.optimized_condition_type != null){
+                    NameBox(
+                        modifier= Modifier.padding(vertical = 4.dp),
+                        text = stringResource(R.string.optimization_condition)
+                    )
 
-                Text(
-                    text = userReactor.optimized_condition_type,
-                    style = DescendantTypography.mainContentText
-                )
-
+                    Text(
+                        text = userReactor.optimized_condition_type ?: "비어있는 값입니다.",
+                        style = DescendantTypography.mainContentText
+                    )
+                }
 
                 NameBox(
                     modifier= Modifier.padding(vertical = 4.dp),
@@ -185,32 +186,34 @@ fun UserReactorInfoScreen(
                     )
                 }
 
-                NameBox(
-                    modifier= Modifier.padding(vertical = 4.dp),
-                    text = stringResource(R.string.reactor_option)
-                )
+                if(!userReactorInfo.reactor_additional_stat.isNullOrEmpty()) {
+                    NameBox(
+                        modifier= Modifier.padding(vertical = 4.dp),
+                        text = stringResource(R.string.reactor_option)
+                    )
 
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(DescendantContentText.mainTitleText) {
-                            append(userReactorInfo.reactor_additional_stat?.getOrNull(0)?.additional_stat_name ?: "비어있는 값입니다.")
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(DescendantContentText.mainTitleText) {
+                                append(userReactorInfo.reactor_additional_stat?.getOrNull(0)?.additional_stat_name)
+                            }
+                            withStyle(DescendantContentText.mainContentText){
+                                append(" : ${userReactorInfo.reactor_additional_stat?.getOrNull(0)?.additional_stat_value}")
+                            }
                         }
-                        withStyle(DescendantContentText.mainContentText){
-                            append(" : ${userReactorInfo.reactor_additional_stat?.getOrNull(0)?.additional_stat_value ?: "비어있는 값입니다."}")
-                        }
-                    }
-                )
+                    )
 
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(DescendantContentText.mainTitleText) {
-                            append(userReactorInfo.reactor_additional_stat?.getOrNull(1)?.additional_stat_name ?: "비어있는 값입니다.")
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(DescendantContentText.mainTitleText) {
+                                append(userReactorInfo.reactor_additional_stat?.getOrNull(1)?.additional_stat_name)
+                            }
+                            withStyle(DescendantContentText.mainContentText){
+                                append(" : ${userReactorInfo.reactor_additional_stat?.getOrNull(1)?.additional_stat_value}")
+                            }
                         }
-                        withStyle(DescendantContentText.mainContentText){
-                            append(" : ${userReactorInfo.reactor_additional_stat?.getOrNull(1)?.additional_stat_value ?: "비어있는 값입니다."}")
-                        }
-                    }
-                )
+                    )
+                }
             }
         }
     }
