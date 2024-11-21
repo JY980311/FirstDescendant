@@ -193,10 +193,10 @@ fun UserReactorInfoScreen(
                 Text(
                     text = buildAnnotatedString {
                         withStyle(DescendantContentText.mainTitleText) {
-                            append(userReactorInfo.reactor_additional_stat[0].additional_stat_name)
+                            append(userReactorInfo.reactor_additional_stat?.getOrNull(0)?.additional_stat_name ?: "비어있는 값입니다.")
                         }
                         withStyle(DescendantContentText.mainContentText){
-                            append(" : ${userReactorInfo.reactor_additional_stat[0].additional_stat_value}")
+                            append(" : ${userReactorInfo.reactor_additional_stat?.getOrNull(0)?.additional_stat_value ?: "비어있는 값입니다."}")
                         }
                     }
                 )
@@ -204,10 +204,10 @@ fun UserReactorInfoScreen(
                 Text(
                     text = buildAnnotatedString {
                         withStyle(DescendantContentText.mainTitleText) {
-                            append(userReactorInfo.reactor_additional_stat[1].additional_stat_name)
+                            append(userReactorInfo.reactor_additional_stat?.getOrNull(1)?.additional_stat_name ?: "비어있는 값입니다.")
                         }
                         withStyle(DescendantContentText.mainContentText){
-                            append(" : ${userReactorInfo.reactor_additional_stat[1].additional_stat_value}")
+                            append(" : ${userReactorInfo.reactor_additional_stat?.getOrNull(1)?.additional_stat_value ?: "비어있는 값입니다."}")
                         }
                     }
                 )
