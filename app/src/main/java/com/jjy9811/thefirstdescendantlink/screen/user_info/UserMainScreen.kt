@@ -243,7 +243,7 @@ fun UserMainScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                modifier = Modifier.align(Alignment.Bottom),
+                modifier = Modifier.align(Alignment.Top),
                 text = "* ",
                 color = Color.LightGray,
                 fontSize = 8.sp,
