@@ -5,5 +5,5 @@ data class UserReactorInfo(
     val reactor_name: String,
     val image_url: String,
     val reactor_tier: String,
-    val optimized_condition_type: String,
+    val optimized_condition_type: String?,
 )
